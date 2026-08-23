@@ -3,7 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Tendo — прототип</title>
+<script>
+  // Встроенные браузеры соцсетей (Instagram, Facebook и т.д.) иногда показывают
+  // старую сохранённую копию страницы. Эта проверка работает изнутри уже открытой
+  // страницы — независимо от того, откуда она была загружена — и сама
+  // перезагружает страницу, если версия на сервере обновилась.
+  // ВАЖНО: при каждом значимом обновлении index.html меняй PAGE_VERSION ниже.
+  const PAGE_VERSION = '2026-08-23-wave-001';
+  (function checkForFreshVersion() {
+    try {
+      fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
+        .then(res => res.text())
+        .then(html => {
+          const match = html.match(/const PAGE_VERSION = '([^']+)'/);
+          if (match && match[1] !== PAGE_VERSION) {
+            location.href = location.pathname + '?_v=' + Date.now();
+          }
+        })
+        .catch(() => { /* проверка не удалась — не критично, продолжаем как есть */ });
+    } catch (e) { /* не критично */ }
+  })();
+</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500,600&family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -205,43 +229,6 @@
   .save-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
   .privacy-note { display: flex; gap: 10px; margin: 16px 18px 0; padding: 12px 14px; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; font-size: calc(var(--font-scale) * 11px); color: var(--text-faint); line-height: 1.5; }
   .privacy-note svg { width: 15px; height: 15px; stroke: var(--text-faint); flex-shrink: 0; margin-top: 1px; }
-
-  /* Wave status animations */
-  .wave-status {
-    display: inline-block;
-    font-size: calc(var(--font-scale) * 16px);
-    font-weight: 600;
-    padding: 10px 16px;
-    border-radius: 18px;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    color: #f496b6;
-  }
-  .wave-status.soft { animation: softPulse 2.4s ease-in-out infinite; }
-  @keyframes softPulse {
-    0%, 100% { opacity: 0.85; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.04); }
-  }
-  .wave-status.ovulation { animation: waveGlow 2s ease-in-out infinite; }
-  @keyframes waveGlow {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(255,100,120,0.4)); }
-    50% { filter: drop-shadow(0 0 12px rgba(255,80,100,0.75)); }
-  }
-  .wave-status.neutral { animation: waveBreathe 4s ease-in-out infinite; }
-  @keyframes waveBreathe {
-    0%, 100% { opacity: 0.9; }
-    50% { opacity: 1; }
-  }
-  input[type="date"].field-input {
-    color-scheme: dark;
-    min-height: 48px;
-    color: var(--text);
-  }
-  input[type="date"].field-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
-    cursor: pointer;
-    opacity: 0.9;
-  }
 </style>
 </head>
 <body>
@@ -1320,7 +1307,6 @@
     return null;
   }
 
-  // Owner-side Wave by cycle (for manually added people)
   const PHASE_ADVICE = {
     menstruation: [
       { icon: '🕊', text: 'Сегодня лучше без резких тем — будь мягче в разговоре.' },
@@ -1551,8 +1537,8 @@
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
-      ownerProfile.photoDataUrl = e.target.result;
+    reader.onload = async (e) => {
+      ownerProfile.photoDataUrl = await compressImage(e.target.result);
       const upload = document.getElementById('ownerPhotoUpload');
       upload.style.borderStyle = 'solid'; upload.style.padding = '0'; upload.style.overflow = 'hidden';
       upload.innerHTML = `<img src="${ownerProfile.photoDataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
@@ -1632,12 +1618,39 @@
 
   let pendingNewPhoto = null;
 
+  // Сжимает фото на стороне браузера перед отправкой — современные телефоны делают
+  // снимки по 5-15 МБ, что легко превышает лимит размера запроса на сервере.
+  // Уменьшаем до разумного размера (макс. сторона 800px, качество JPEG 80%).
+  function compressImage(dataUrl) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxSize = 800;
+        let { width, height } = img;
+        if (width > height && width > maxSize) {
+          height = Math.round(height * maxSize / width);
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = Math.round(width * maxSize / height);
+          height = maxSize;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => resolve(dataUrl); // если не получилось сжать — используем оригинал как есть
+      img.src = dataUrl;
+    });
+  }
+
   function handlePhotoSelect(event, uploadElId, personKey) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target.result;
+    reader.onload = async (e) => {
+      const dataUrl = await compressImage(e.target.result);
       const uploadEl = document.getElementById(uploadElId);
       uploadEl.style.borderStyle = 'solid';
       uploadEl.style.padding = '0';
@@ -1709,6 +1722,10 @@
       ]},
   };
 
+  // Демо-людей, которых уже заменили или удалили, больше не показываем при следующих
+  // открытиях приложения (иначе они бы "воскресали" каждый раз, ведь сами демо-записи
+  // прописаны прямо в коде, не в базе данных).
+  try {
 
   const _memStore = {};
   const safeStorage = {
@@ -1716,11 +1733,6 @@
     setItem(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { _memStore[k] = String(v); } },
     removeItem(k) { try { window.localStorage.removeItem(k); } catch (e) { delete _memStore[k]; } }
   };
-
-  // Демо-людей, которых уже заменили или удалили, больше не показываем при следующих
-  // открытиях приложения (иначе они бы "воскресали" каждый раз, ведь сами демо-записи
-  // прописаны прямо в коде, не в базе данных).
-  try {
     const dismissed = JSON.parse(safeStorage.getItem('tendo_dismissed_demos') || '[]');
     dismissed.forEach(key => delete people[key]);
   } catch (e) { /* ничего страшного, просто покажем демо ещё раз */ }
