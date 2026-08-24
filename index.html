@@ -488,6 +488,15 @@
       </div>
 
       <div class="empty-advice" style="text-align:left;padding-top:10px" data-i18n="aboutMeHelper">Это может использовать AI-хелпер, когда подсказывает, как лучше сформулировать сообщение от твоего имени.</div>
+
+      <div class="section" style="margin-top:20px">
+        <div class="section-head"><span class="section-title" data-i18n="ownerWishlistTitle">Мой Wishlist</span></div>
+        <div class="empty-advice" style="text-align:left;padding-bottom:10px" data-i18n="ownerWishlistDesc">Что бы ты хотел(а) на день рождения или другую значимую дату — увидят те, кто добавит тебя в свой круг.</div>
+        <div id="ownerWishlistList"></div>
+        <div class="field" style="padding:0"><input class="field-input" id="newOwnerWishItem" data-i18n-ph="wishlistAddPh" placeholder="например, кружка ручной работы" /></div>
+        <button class="save-btn" style="margin-top:10px;background:rgba(255,255,255,0.08);color:var(--text-dim);box-shadow:none" onclick="addOwnerWishlistItem()" data-i18n="wishlistAddBtn">Добавить идею</button>
+      </div>
+
       <button class="save-btn" id="saveProfileBtn" onclick="saveWholeProfile()" style="margin-top:14px" data-i18n="saveProfileBtn">Сохранить</button>
     </div>
 
@@ -979,6 +988,7 @@
       aboutFreeformPh: "просто напиши о себе всё, что хочешь — а AI сам разложит это по полям анкеты", aboutParseBtn: "Разобрать с помощью AI", aboutParsing: "AI распределяет по полям...", aboutParsed: "Готово ✓ Проверь и поправь, если нужно", aboutParseError: "Не удалось разобрать текст, попробуй ещё раз",
       serverConnected: "Подключено к серверу", serverOffline: "Демо-режим (сервер недоступен)",
       aboutMeHelper: "Это может использовать AI-хелпер, когда подсказывает, как лучше сформулировать сообщение от твоего имени.",
+      ownerWishlistTitle: "Мой Wishlist", ownerWishlistDesc: "Что бы ты хотел(а) на день рождения или другую значимую дату — увидят те, кто добавит тебя в свой круг.",
       circleSection: "Круг", circleSizeText: (n) => `В твоём круге — ${n} человек`,
       myWaveTitle: "Моя Wave", myWaveDesc: "Отметь, как ты сегодня — люди, у кого ты в круге, увидят это.", waveGentleBtn: "🕊 Помягче со мной", waveGreatBtn: "Всё супер",
       aiDailyTitle: "Советы на сегодня", aiDailyLoading: "Собираем советы…",
@@ -1078,6 +1088,7 @@
       aboutFreeformPh: "просто напиши про себе все, що хочеш — а AI сам розкладе це по полях анкети", aboutParseBtn: "Розібрати за допомогою AI", aboutParsing: "AI розподіляє по полях...", aboutParsed: "Готово ✓ Перевір і виправ, якщо потрібно", aboutParseError: "Не вдалося розібрати текст, спробуй ще раз",
       serverConnected: "Підключено до сервера", serverOffline: "Демо-режим (сервер недоступний)",
       aboutMeHelper: "Це може використовувати AI-помічник, коли підказує, як краще сформулювати повідомлення від твого імені.",
+      ownerWishlistTitle: "Мій Wishlist", ownerWishlistDesc: "Що б ти хотів(ла) на день народження чи іншу значущу дату — побачать ті, хто додасть тебе у своє коло.",
       circleSection: "Коло", circleSizeText: (n) => `У твоєму колі — ${n} людей`,
       myWaveTitle: "Моя Wave", myWaveDesc: "Познач, як ти сьогодні — люди, у кого ти в колі, побачать це.", waveGentleBtn: "🕊 М'якіше зі мною", waveGreatBtn: "Все супер",
       aiDailyTitle: "Поради на сьогодні", aiDailyLoading: "Збираємо поради…",
@@ -1177,6 +1188,7 @@
       aboutFreeformPh: "just write anything about yourself, AI will sort it into the form fields", aboutParseBtn: "Sort with AI", aboutParsing: "AI is sorting into fields...", aboutParsed: "Done — review and adjust if needed", aboutParseError: "Could not parse the text, please try again",
       serverConnected: "Connected to server", serverOffline: "Demo mode (server unavailable)",
       aboutMeHelper: "The AI helper can use this when suggesting how to phrase a message in your voice.",
+      ownerWishlistTitle: "My Wishlist", ownerWishlistDesc: "What you'd want for your birthday or another meaningful date — visible to anyone who adds you to their circle.",
       circleSection: "Circle", circleSizeText: (n) => `Your circle — ${n} people`,
       myWaveTitle: "My Wave", myWaveDesc: "Mark how you are today — people who have you in their circle will see this.", waveGentleBtn: "🕊 Be gentle with me", waveGreatBtn: "All good",
       aiDailyTitle: "Advice for today", aiDailyLoading: "Gathering advice…",
@@ -1276,6 +1288,7 @@
       aboutFreeformPh: "scrie orice despre tine, AI va sorta in campurile formularului", aboutParseBtn: "Sorteaza cu AI", aboutParsing: "AI sorteaza campurile...", aboutParsed: "Gata - verifica si ajusteaza daca e nevoie", aboutParseError: "Nu s-a putut analiza textul, incearca din nou",
       serverConnected: "Conectat la server", serverOffline: "Mod demo (server indisponibil)",
       aboutMeHelper: "Asistentul AI poate folosi asta când sugerează cum să formulezi un mesaj în numele tău.",
+      ownerWishlistTitle: "Wishlist-ul meu", ownerWishlistDesc: "Ce ti-ai dori de ziua ta sau la o alta data importanta - va fi vazut de cei care te adauga in cercul lor.",
       circleSection: "Cerc", circleSizeText: (n) => `În cercul tău — ${n} persoane`,
       myWaveTitle: "Wave-ul meu", myWaveDesc: "Marcheaza cum esti azi - oamenii care te au in cercul lor vor vedea asta.", waveGentleBtn: "🕊 Fii blând cu mine", waveGreatBtn: "Totul e bine",
       aiDailyTitle: "Sfaturi pentru azi", aiDailyLoading: "Adunam sfaturile…",
@@ -1361,6 +1374,7 @@
     document.getElementById('ownerInterests').value = ownerProfile.interests || '';
     document.getElementById('ownerDates').value = ownerProfile.dates || '';
     document.getElementById('ownerCommunication').value = ownerProfile.communication || '';
+    renderOwnerWishlist();
     const upload = document.getElementById('ownerPhotoUpload');
     if (ownerProfile.photoDataUrl) {
       upload.style.borderStyle = 'solid'; upload.style.padding = '0'; upload.style.overflow = 'hidden';
@@ -1438,7 +1452,7 @@
     showScreen('settings');
   }
 
-  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null };
+  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null, wishlist: [] };
 
   function handleOwnerPhotoSelect(event) {
     const file = event.target.files[0];
@@ -1452,6 +1466,37 @@
       updateHeaderAvatar();
     };
     reader.readAsDataURL(file);
+  }
+
+  function renderOwnerWishlist() {
+    const container = document.getElementById('ownerWishlistList');
+    if (!container) return;
+    if (!ownerProfile.wishlist || ownerProfile.wishlist.length === 0) {
+      container.innerHTML = `<div class="empty-advice" style="padding-bottom:8px">${T('wishlistEmpty')}</div>`;
+      return;
+    }
+    container.innerHTML = ownerProfile.wishlist.map((w, i) => `
+      <div class="advice-item" style="cursor:default">
+        <div class="advice-icon">🎁</div>
+        <div class="advice-text">${escapeHtmlApp(w)}</div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2" style="cursor:pointer" onclick="removeOwnerWishlistItem(${i})"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </div>
+    `).join('');
+  }
+
+  function addOwnerWishlistItem() {
+    const input = document.getElementById('newOwnerWishItem');
+    const text = input.value.trim();
+    if (!text) return;
+    ownerProfile.wishlist = ownerProfile.wishlist || [];
+    ownerProfile.wishlist.push(text);
+    input.value = '';
+    renderOwnerWishlist();
+  }
+
+  function removeOwnerWishlistItem(index) {
+    ownerProfile.wishlist.splice(index, 1);
+    renderOwnerWishlist();
   }
 
   async function saveWholeProfile() {
@@ -1479,7 +1524,7 @@
           body: JSON.stringify({
             about: ownerProfile.about, interests: ownerProfile.interests,
             important_dates: ownerProfile.dates, communication_style: ownerProfile.communication,
-            photo_url: ownerProfile.photoDataUrl
+            photo_url: ownerProfile.photoDataUrl, wishlist: ownerProfile.wishlist || []
           })
         })
       ]);
@@ -1817,6 +1862,7 @@
         ownerProfile.interests = p.interests || '';
         ownerProfile.dates = p.important_dates || '';
         ownerProfile.communication = p.communication_style || '';
+        try { ownerProfile.wishlist = JSON.parse(p.wishlist_json || '[]'); } catch (e) { ownerProfile.wishlist = []; }
         const aboutEl = document.getElementById('ownerAbout');
         const interestsEl = document.getElementById('ownerInterests');
         const datesEl = document.getElementById('ownerDates');
@@ -1825,6 +1871,7 @@
         if (interestsEl) interestsEl.value = ownerProfile.interests;
         if (datesEl) datesEl.value = ownerProfile.dates;
         if (commEl) commEl.value = ownerProfile.communication;
+        renderOwnerWishlist();
       }
     } catch (err) {
       console.warn('Не удалось загрузить профиль "О себе":', err.message);
