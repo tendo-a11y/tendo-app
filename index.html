@@ -2586,6 +2586,9 @@
       // Локальный сброс — делаем всегда, сразу, независимо от того, ответит ли
       // сервер. Человек явно попросил удалить и начать с чистого листа — это
       // не должно зависеть от временного сбоя сети.
+      // ВАЖНО: сохраняем токен ДО очистки — иначе запрос на удаление уйдёт
+      // на сервер без авторизации и ничего реально не удалит там.
+      const tokenForDeletion = sessionToken;
       localStorage.removeItem('tendo_session_token');
       localStorage.removeItem('tendo_consent_given');
       localStorage.removeItem('tendo_google_prompt_shown');
@@ -2593,9 +2596,11 @@
       localStorage.removeItem('tendo_dismissed_demos');
       sessionToken = null;
 
-      if (serverConnected) {
-        apiFetch('/me', { method: 'DELETE' })
-          .catch(err => console.warn('Не удалось удалить аккаунт на сервере:', err.message));
+      if (serverConnected && tokenForDeletion) {
+        fetch(API_BASE_URL + '/me', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenForDeletion }
+        }).catch(err => console.warn('Не удалось удалить аккаунт на сервере:', err.message));
       }
     }
   }
