@@ -500,8 +500,11 @@
       <button class="save-btn" id="saveProfileBtn" onclick="saveWholeProfile()" style="margin-top:14px" data-i18n="saveProfileBtn">Сохранить</button>
 
       <div class="section" style="margin-top:24px">
-        <div class="section-head"><span class="section-title" data-i18n="changelogTitle">Обновления приложения</span></div>
-        <div id="changelogList"></div>
+        <div class="section-head" style="cursor:pointer" onclick="toggleChangelog()">
+          <span class="section-title" data-i18n="changelogTitle">Обновления приложения</span>
+          <svg id="changelogChevron" viewBox="0 0 24 24" fill="none" stroke-width="2" style="width:16px;height:16px;transition:transform 0.2s"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div id="changelogList" style="display:none"></div>
       </div>
     </div>
 
@@ -1486,6 +1489,14 @@
       updateHeaderAvatar();
     };
     reader.readAsDataURL(file);
+  }
+
+  function toggleChangelog() {
+    const list = document.getElementById('changelogList');
+    const chevron = document.getElementById('changelogChevron');
+    const isOpen = list.style.display !== 'none';
+    list.style.display = isOpen ? 'none' : 'block';
+    chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
   }
 
   function renderChangelog() {
