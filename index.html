@@ -498,6 +498,11 @@
       </div>
 
       <button class="save-btn" id="saveProfileBtn" onclick="saveWholeProfile()" style="margin-top:14px" data-i18n="saveProfileBtn">Сохранить</button>
+
+      <div class="section" style="margin-top:24px">
+        <div class="section-head"><span class="section-title" data-i18n="changelogTitle">Обновления приложения</span></div>
+        <div id="changelogList"></div>
+      </div>
     </div>
 
     <div class="section" style="background:rgba(239,95,146,0.08);border-color:rgba(239,95,146,0.25)">
@@ -989,6 +994,7 @@
       serverConnected: "Подключено к серверу", serverOffline: "Демо-режим (сервер недоступен)",
       aboutMeHelper: "Это может использовать AI-хелпер, когда подсказывает, как лучше сформулировать сообщение от твоего имени.",
       ownerWishlistTitle: "Мой Wishlist", ownerWishlistDesc: "Что бы ты хотел(а) на день рождения или другую значимую дату — увидят те, кто добавит тебя в свой круг.",
+      changelogTitle: "Обновления приложения",
       circleSection: "Круг", circleSizeText: (n) => `В твоём круге — ${n} человек`,
       myWaveTitle: "Моя Wave", myWaveDesc: "Отметь, как ты сегодня — люди, у кого ты в круге, увидят это.", waveGentleBtn: "🕊 Помягче со мной", waveGreatBtn: "Всё супер",
       aiDailyTitle: "Советы на сегодня", aiDailyLoading: "Собираем советы…",
@@ -1089,6 +1095,7 @@
       serverConnected: "Підключено до сервера", serverOffline: "Демо-режим (сервер недоступний)",
       aboutMeHelper: "Це може використовувати AI-помічник, коли підказує, як краще сформулювати повідомлення від твого імені.",
       ownerWishlistTitle: "Мій Wishlist", ownerWishlistDesc: "Що б ти хотів(ла) на день народження чи іншу значущу дату — побачать ті, хто додасть тебе у своє коло.",
+      changelogTitle: "Оновлення застосунку",
       circleSection: "Коло", circleSizeText: (n) => `У твоєму колі — ${n} людей`,
       myWaveTitle: "Моя Wave", myWaveDesc: "Познач, як ти сьогодні — люди, у кого ти в колі, побачать це.", waveGentleBtn: "🕊 М'якіше зі мною", waveGreatBtn: "Все супер",
       aiDailyTitle: "Поради на сьогодні", aiDailyLoading: "Збираємо поради…",
@@ -1189,6 +1196,7 @@
       serverConnected: "Connected to server", serverOffline: "Demo mode (server unavailable)",
       aboutMeHelper: "The AI helper can use this when suggesting how to phrase a message in your voice.",
       ownerWishlistTitle: "My Wishlist", ownerWishlistDesc: "What you'd want for your birthday or another meaningful date — visible to anyone who adds you to their circle.",
+      changelogTitle: "App updates",
       circleSection: "Circle", circleSizeText: (n) => `Your circle — ${n} people`,
       myWaveTitle: "My Wave", myWaveDesc: "Mark how you are today — people who have you in their circle will see this.", waveGentleBtn: "🕊 Be gentle with me", waveGreatBtn: "All good",
       aiDailyTitle: "Advice for today", aiDailyLoading: "Gathering advice…",
@@ -1289,6 +1297,7 @@
       serverConnected: "Conectat la server", serverOffline: "Mod demo (server indisponibil)",
       aboutMeHelper: "Asistentul AI poate folosi asta când sugerează cum să formulezi un mesaj în numele tău.",
       ownerWishlistTitle: "Wishlist-ul meu", ownerWishlistDesc: "Ce ti-ai dori de ziua ta sau la o alta data importanta - va fi vazut de cei care te adauga in cercul lor.",
+      changelogTitle: "Actualizari aplicatie",
       circleSection: "Cerc", circleSizeText: (n) => `În cercul tău — ${n} persoane`,
       myWaveTitle: "Wave-ul meu", myWaveDesc: "Marcheaza cum esti azi - oamenii care te au in cercul lor vor vedea asta.", waveGentleBtn: "🕊 Fii blând cu mine", waveGreatBtn: "Totul e bine",
       aiDailyTitle: "Sfaturi pentru azi", aiDailyLoading: "Adunam sfaturile…",
@@ -1375,6 +1384,7 @@
     document.getElementById('ownerDates').value = ownerProfile.dates || '';
     document.getElementById('ownerCommunication').value = ownerProfile.communication || '';
     renderOwnerWishlist();
+    renderChangelog();
     const upload = document.getElementById('ownerPhotoUpload');
     if (ownerProfile.photoDataUrl) {
       upload.style.borderStyle = 'solid'; upload.style.padding = '0'; upload.style.overflow = 'hidden';
@@ -1452,6 +1462,16 @@
     showScreen('settings');
   }
 
+  // Список изменений и нововведений приложения — добавляется новая запись
+  // наверх при каждом значимом обновлении. Показывается в Профиле каждому
+  // владельцу круга ("Роль 1"), самая свежая запись первая.
+  const CHANGELOG = [
+    { date: '2026-08-24', title: 'Свой Wishlist', text: 'Теперь можно указать, что хочется на день рождения или другую значимую дату — это увидят те, кто добавит тебя в свой круг.' },
+    { date: '2026-08-24', title: 'Ответы в поддержке', text: 'Если написал(а) в поддержку — ответ теперь виден прямо в приложении, без почты.' },
+    { date: '2026-08-22', title: 'Настоящий вход через Google', text: 'Круг теперь привязан к твоему аккаунту, а не к браузеру — данные не потеряются при смене телефона или очистке кэша.' },
+    { date: '2026-08-21', title: 'Советы стали честнее', text: 'Ежедневные советы теперь собираются напрямую из твоих данных, без риска что-то выдумать.' }
+  ];
+
   const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null, wishlist: [] };
 
   function handleOwnerPhotoSelect(event) {
@@ -1466,6 +1486,29 @@
       updateHeaderAvatar();
     };
     reader.readAsDataURL(file);
+  }
+
+  function renderChangelog() {
+    const container = document.getElementById('changelogList');
+    if (!container) return;
+    const dateFmt = d => new Date(d).toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : currentLang === 'uk' ? 'uk-UA' : currentLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'long' });
+    const grouped = {};
+    CHANGELOG.forEach(entry => {
+      if (!grouped[entry.date]) grouped[entry.date] = [];
+      grouped[entry.date].push(entry);
+    });
+    const dates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+    container.innerHTML = dates.map(date => `
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;color:var(--text-faint);margin-bottom:6px;font-weight:700">${dateFmt(date)}</div>
+        ${grouped[date].map(entry => `
+          <div class="advice-item" style="cursor:default;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:6px">
+            <div style="font-weight:700;font-size:13px">${escapeHtmlApp(entry.title)}</div>
+            <div style="font-size:12px;color:var(--text-dim);text-align:left">${escapeHtmlApp(entry.text)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
   }
 
   function renderOwnerWishlist() {
