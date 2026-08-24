@@ -1846,6 +1846,19 @@
             };
           }
         });
+        // Как только у пользователя реально есть хоть один настоящий человек в
+        // круге — демо-карточки больше не нужны и не должны "накладываться"
+        // поверх реальных данных. Убираем их все разом и запоминаем это, чтобы
+        // они не появлялись снова при следующих открытиях.
+        const demoKeysStillPresent = Object.keys(people).filter(k => people[k].isDemo);
+        if (demoKeysStillPresent.length > 0) {
+          const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
+          demoKeysStillPresent.forEach(key => {
+            delete people[key];
+            if (!dismissed.includes(key)) dismissed.push(key);
+          });
+          localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
+        }
         rebuildCircle();
       }
     } catch (err) {
