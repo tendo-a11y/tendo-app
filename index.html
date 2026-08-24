@@ -13,7 +13,7 @@
   // страницы — независимо от того, откуда она была загружена — и сама
   // перезагружает страницу, если версия на сервере обновилась.
   // ВАЖНО: при каждом значимом обновлении index.html меняй PAGE_VERSION ниже.
-  const PAGE_VERSION = '2026-08-24-wave-002';
+  const PAGE_VERSION = '2026-08-22-001';
   (function checkForFreshVersion() {
     try {
       fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
@@ -229,42 +229,6 @@
   .save-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
   .privacy-note { display: flex; gap: 10px; margin: 16px 18px 0; padding: 12px 14px; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; font-size: calc(var(--font-scale) * 11px); color: var(--text-faint); line-height: 1.5; }
   .privacy-note svg { width: 15px; height: 15px; stroke: var(--text-faint); flex-shrink: 0; margin-top: 1px; }
-
-  .wave-status {
-    display: inline-block;
-    font-size: calc(var(--font-scale) * 16px);
-    font-weight: 600;
-    padding: 10px 16px;
-    border-radius: 18px;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    color: #f496b6;
-  }
-  .wave-status.soft { animation: softPulse 2.4s ease-in-out infinite; }
-  @keyframes softPulse {
-    0%, 100% { opacity: 0.85; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.04); }
-  }
-  .wave-status.ovulation { animation: waveGlow 2s ease-in-out infinite; }
-  @keyframes waveGlow {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(255,100,120,0.4)); }
-    50% { filter: drop-shadow(0 0 12px rgba(255,80,100,0.75)); }
-  }
-  .wave-status.neutral { animation: waveBreathe 4s ease-in-out infinite; }
-  @keyframes waveBreathe {
-    0%, 100% { opacity: 0.9; }
-    50% { opacity: 1; }
-  }
-  input[type="date"].field-input {
-    color-scheme: dark;
-    min-height: 48px;
-    color: var(--text);
-  }
-  input[type="date"].field-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
-    cursor: pointer;
-    opacity: 0.9;
-  }
 </style>
 </head>
 <body>
@@ -328,7 +292,7 @@
         <circle cx="152" cy="152" r="150" fill="none" stroke="rgba(120,160,255,0.75)" stroke-width="2" stroke-dasharray="6 10" stroke-linecap="round"/>
       </svg>
       <div class="orb-sparkles"><div class="spark"></div><div class="spark"></div><div class="spark"></div></div>
-      <div class="center-orb" onclick="rebuildToday(); showScreen('today'); loadDailyAdvice();">
+      <div class="center-orb" onclick="showScreen('today'); loadDailyAdvice();">
         <div class="heart">♥</div><div class="label">Сегодня</div><div class="sub">советы для тебя</div><div class="count" id="todayCount">3</div>
       </div>
     </div>
@@ -347,7 +311,7 @@
     </div>
     <nav class="nav">
       <div class="nav-item active" onclick="showScreen('circle')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg><span data-i18n="navCircle">Круг</span></div>
-      <div class="nav-item" onclick="rebuildToday(); showScreen('today'); loadDailyAdvice();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span data-i18n="navStatus">Статус</span></div>
+      <div class="nav-item" onclick="showScreen('today'); loadDailyAdvice();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span data-i18n="navStatus">Статус</span></div>
       <div class="nav-add-wrap">
         <div class="nav-add" onclick="openInvite()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
         <svg class="nav-add-label" viewBox="0 0 60 16">
@@ -412,11 +376,6 @@
     <div class="field" style="margin-top:22px"><label class="field-label" data-i18n="addLikes">Любит</label><textarea class="field-input" id="newLikes" data-i18n-ph="addLikesPh" placeholder="например, чёрный кофе без сахара, растения на подоконнике"></textarea></div>
     <div class="field"><label class="field-label" data-i18n="addBirthday">День рождения</label><input class="field-input" id="newBirthday" data-i18n-ph="addBirthdayPh" placeholder="например, 12 марта" /></div>
     <div class="field"><label class="field-label" data-i18n="addRemember">Что стоит помнить</label><textarea class="field-input" id="newRemember" data-i18n-ph="addRememberPh" placeholder="например, не любит сюрпризы на людях"></textarea></div>
-    <div class="field">
-      <label class="field-label">Начало цикла</label>
-      <input class="field-input" type="date" id="newCycleStart" />
-      <div style="margin-top:8px;font-size:11.5px;color:var(--text-faint);line-height:1.45;text-align:left">Позаботься о подруге в трудные дни.</div>
-    </div>
     <div class="advice-item" style="cursor:default;margin:0 18px 14px">
       <div class="advice-icon" style="background:rgba(240,169,78,0.15)">⭐</div>
       <div class="advice-text" data-i18n="legendPriority">Приоритетный</div>
@@ -1354,105 +1313,6 @@
     return null;
   }
 
-  const PHASE_ADVICE = {
-    menstruation: [
-      { icon: '🕊', text: 'Сегодня лучше без резких тем — будь мягче в разговоре.' },
-      { icon: '💗', text: 'Она чувствует потребность в тепле и поддержке. Скажи что-то доброе и искреннее.' },
-      { icon: '☕', text: 'Предложи уютный вечер дома — без активных планов сегодня.' }
-    ],
-    follicular: [
-      { icon: '💬', text: 'Хорошее время для лёгкого общения и совместных планов.' },
-      { icon: '✨', text: 'Энергия растёт — можно предложить что-то интересное или активное.' }
-    ],
-    ovulation: [
-      { icon: '❤️', text: 'У неё отличное настроение — хороший момент предложить встретиться.' },
-      { icon: '💬', text: 'Можно просто написать и разделить хорошее настроение вместе.' }
-    ],
-    luteal: [
-      { icon: '🕊', text: 'К концу цикла чувствительность выше — будь внимательнее к тону.' },
-      { icon: '💗', text: 'Поддержка и спокойствие сейчас важнее развлечений.' }
-    ]
-  };
-
-  function getCyclePhase(cycleStart) {
-    if (!cycleStart) return null;
-    const start = new Date(cycleStart + 'T00:00:00');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const diff = Math.floor((today - start) / 86400000);
-    if (diff < 0) return null;
-    const day = (diff % 28) + 1;
-    if (day <= 5) return { phase: 'menstruation', day, anim: 'soft', text: '🕊 Лучше помягче', label: 'Менструация' };
-    if (day <= 12) return { phase: 'follicular', day, anim: 'neutral', text: '💚 Нейтральное настроение', label: 'Фолликулярная' };
-    if (day <= 16) return { phase: 'ovulation', day, anim: 'ovulation', text: '❤️ Всё супер', label: 'Овуляция' };
-    return { phase: 'luteal', day, anim: day >= 25 ? 'soft' : 'neutral', text: day >= 25 ? '🕊 Лучше помягче' : '💚 Нейтральное настроение', label: 'Лютеиновая' };
-  }
-
-  function applyCycleToPerson(p) {
-    if (!p || p.isDemo) return null;
-    const info = getCyclePhase(p.cycleStart);
-    if (!info) {
-      if (p._cycleAdvice) {
-        p.type = 'regular';
-        p.waveText = null;
-        p.badge = p.priorityTag ? 'star' : null;
-        p.advice = [];
-        p._cycleAdvice = false;
-        p._cycleDay = null;
-        p._cyclePhase = null;
-        p._cycleLabel = null;
-      }
-      return null;
-    }
-    p.type = 'wave';
-    p.waveText = info.text;
-    p.badge = p.badge === 'crown' ? 'crown' : 'wave';
-    p.advice = PHASE_ADVICE[info.phase] || [];
-    p._cycleAdvice = true;
-    p._cycleDay = info.day;
-    p._cyclePhase = info.phase;
-    p._cycleLabel = info.label;
-    return info;
-  }
-
-  function getWaveAnimClass(personOrText) {
-    if (personOrText && typeof personOrText === 'object') {
-      const info = getCyclePhase(personOrText.cycleStart);
-      if (info) return info.anim;
-      personOrText = personOrText.waveText;
-    }
-    if (!personOrText) return 'neutral';
-    const s = String(personOrText).toLowerCase();
-    if (s.includes('мягче') || s.includes('помягче') || s.includes('мягк')) return 'soft';
-    if (s.includes('супер') || s.includes('отлично')) return 'ovulation';
-    return 'neutral';
-  }
-
-  function hasOwnerWave(p) {
-    applyCycleToPerson(p);
-    if (p.cycleStart && p.waveText) return true;
-    if (p.isDemo && (p.type === 'wave' || p.waveText)) return true;
-    return false;
-  }
-
-  function isGreatMood(p) {
-    if (p.cycleStart && p._cyclePhase === 'ovulation') return true;
-    if (p.waveText && /супер|отлично/i.test(p.waveText)) return true;
-    return false;
-  }
-
-  function statusRank(p) {
-    const isWave = hasOwnerWave(p);
-    const great = isWave && isGreatMood(p);
-    if (isWave && great) return 1;
-    if (isWave && p.priorityTag) return 2;
-    if (isWave) return 3;
-    if (p.priorityTag) return 4;
-    return 5;
-  }
-
-
-
   const REL_KEYS = { partner: 'relPartner', friend: 'relFriend', family: 'relFamily', colleague: 'relColleague' };
   function relLabel(code) { return T(REL_KEYS[code]) || code; }
 
@@ -1769,19 +1629,11 @@
       ]},
   };
 
-
-  const _memStore = {};
-  const safeStorage = {
-    getItem(k) { try { return window.localStorage.getItem(k); } catch (e) { return _memStore[k] ?? null; } },
-    setItem(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { _memStore[k] = String(v); } },
-    removeItem(k) { try { window.localStorage.removeItem(k); } catch (e) { delete _memStore[k]; } }
-  };
-
   // Демо-людей, которых уже заменили или удалили, больше не показываем при следующих
   // открытиях приложения (иначе они бы "воскресали" каждый раз, ведь сами демо-записи
   // прописаны прямо в коде, не в базе данных).
   try {
-    const dismissed = JSON.parse(safeStorage.getItem('tendo_dismissed_demos') || '[]');
+    const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
     dismissed.forEach(key => delete people[key]);
   } catch (e) { /* ничего страшного, просто покажем демо ещё раз */ }
 
@@ -1805,11 +1657,11 @@
   // человека или замена демо-карточки) — но не блокируем: можно продолжить
   // и без входа, выбор просто показывается на самом уместном моменте.
   function requireRealAccount(action) {
-    if (isRealAccount || safeStorage.getItem('tendo_google_prompt_shown') === 'true') {
+    if (isRealAccount || localStorage.getItem('tendo_google_prompt_shown') === 'true') {
       action();
       return;
     }
-    safeStorage.setItem('tendo_google_prompt_shown', 'true');
+    localStorage.setItem('tendo_google_prompt_shown', 'true');
     pendingActionAfterSignIn = action;
     showScreen('google-required');
   }
@@ -1842,7 +1694,7 @@
         body: JSON.stringify({ idToken: response.credential, language: currentLang })
       });
       sessionToken = data.sessionToken;
-      safeStorage.setItem('tendo_session_token', sessionToken);
+      localStorage.setItem('tendo_session_token', sessionToken);
       isRealAccount = true;
       if (data.user && data.user.name) {
         ownerProfile.name = data.user.name;
@@ -1863,7 +1715,7 @@
       else alert('Не удалось войти через Google, попробуй ещё раз.');
     }
   }
-  let sessionToken = safeStorage.getItem('tendo_session_token');
+  let sessionToken = localStorage.getItem('tendo_session_token');
   let serverConnected = false;
 
   async function apiFetch(path, options = {}) {
@@ -1891,16 +1743,16 @@
         } catch (checkErr) {
           // Токен устарел (например, сервер обновлялся) — забываем его и входим заново
           sessionToken = null;
-          safeStorage.removeItem('tendo_session_token');
+          localStorage.removeItem('tendo_session_token');
         }
       }
       if (!sessionToken) {
         // Постоянный тестовый идентификатор устройства — реальная версия заменит
         // это настоящим Google-входом (сейчас на сервере это временная заглушка).
-        let deviceId = safeStorage.getItem('tendo_device_id');
+        let deviceId = localStorage.getItem('tendo_device_id');
         if (!deviceId) {
           deviceId = 'device_' + Math.random().toString(36).slice(2);
-          safeStorage.setItem('tendo_device_id', deviceId);
+          localStorage.setItem('tendo_device_id', deviceId);
         }
         const idToken = `stub:${deviceId}:${deviceId}@local.tendo:${encodeURIComponent(ownerProfile.name || 'Пользователь')}`;
         const data = await apiFetch('/auth/google', {
@@ -1908,7 +1760,7 @@
           body: JSON.stringify({ idToken, language: currentLang })
         });
         sessionToken = data.sessionToken;
-        safeStorage.setItem('tendo_session_token', sessionToken);
+        localStorage.setItem('tendo_session_token', sessionToken);
       }
       setServerStatus(true);
       await loadCircleFromServer();
@@ -1988,11 +1840,10 @@
             const colors = colorPool[Object.keys(people).length % colorPool.length];
             people[p.id] = {
               name: p.name, relation: p.relation || 'regular', angle: 0, type: 'regular',
-              badge: null, colors, waveText: null, cycleStart: p.cycle_start || null, priorityTag: !!p.priority,
+              badge: null, colors, waveText: null, priorityTag: !!p.priority,
               photoDataUrl: p.photo_url || null, likes: p.likes || '', remember: p.remember || '', birthdate: p.birthdate || '',
               wishlist: p.wishlist || [], extraDates: p.dates || [], history: p.history || [], advice: [], serverId: p.id
             };
-            applyCycleToPerson(people[p.id]);
           }
         });
         rebuildCircle();
@@ -2073,7 +1924,7 @@
 
   function giveConsent() {
     consentGivenAt = new Date();
-    safeStorage.setItem('tendo_consent_given', 'true');
+    localStorage.setItem('tendo_consent_given', 'true');
     if (serverConnected || sessionToken) saveConsentToServer();
     showScreen('circle');
   }
@@ -2149,7 +2000,6 @@
     const keys = Object.keys(people);
     keys.forEach((key, i) => {
       const p = people[key];
-      applyCycleToPerson(p);
       p.angle = (360 / keys.length) * i - 90;
       const rad = (p.angle * Math.PI) / 180;
       const x = cx + r * Math.cos(rad), y = cy + r * Math.sin(rad);
@@ -2186,19 +2036,15 @@
     const remember = document.getElementById('newRemember').value;
     const birthdate = document.getElementById('newBirthday').value;
     const priorityTag = document.getElementById('newPriority').checked;
-    const cycleStart = document.getElementById('newCycleStart').value || null;
     const photoToSave = pendingNewPhoto;
     const key = 'p_' + Date.now();
     const colors = colorPool[Object.keys(people).length % colorPool.length];
-    const person = { name, relation, angle: 0, type: 'regular', badge: null, colors, waveText: null, cycleStart, priorityTag,
+    people[key] = { name, relation, angle: 0, type: 'regular', badge: null, colors, waveText: null, priorityTag,
       photoDataUrl: photoToSave, likes, remember, birthdate, wishlist: [], extraDates: [], history: [], advice: [] };
-    applyCycleToPerson(person);
-    people[key] = person;
     document.getElementById('newName').value = '';
     document.getElementById('newLikes').value = '';
     document.getElementById('newBirthday').value = '';
     document.getElementById('newRemember').value = '';
-    document.getElementById('newCycleStart').value = '';
     document.getElementById('newPriority').checked = false;
     pendingNewPhoto = null;
     const uploadEl = document.getElementById('newPhotoUpload');
@@ -2211,7 +2057,7 @@
     if (serverConnected) {
       apiFetch('/circle', {
         method: 'POST',
-        body: JSON.stringify({ name, relation, likes, remember, birthdate, cycle_start: cycleStart, priority: priorityTag, photo_url: photoToSave, wishlist: [], dates: [], history: [] })
+        body: JSON.stringify({ name, relation, likes, remember, birthdate, priority: priorityTag, photo_url: photoToSave, wishlist: [], dates: [], history: [] })
       }).then(data => {
         if (data.person) people[key].serverId = data.person.id;
       }).catch(err => console.warn('Не удалось сохранить человека на сервере:', err.message));
@@ -2221,7 +2067,6 @@
   // open person card
   function openPerson(key) {
     const p = people[key];
-    applyCycleToPerson(p);
     const tagsHtml = (p.type === 'wave' || p.priorityTag) ? `<div class="tags-row">
       ${p.type === 'wave' ? `<div class="tag wave-tag">${waveBadgeSvg.replace('white','currentColor')} WAVE ${T('today').toLowerCase()}</div>` : ''}
       ${p.priorityTag ? `<div class="tag priority-tag">${starBadgeSvg.replace(/white/g,'currentColor')} ${T('legendPriority')}</div>` : ''}
@@ -2251,7 +2096,7 @@
         <div class="profile-info">
           <div class="profile-name-row"><span class="profile-name">${escapeHtmlApp(p.name)}</span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" onclick="openEdit('${key}')"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg></div>
           <div class="relation-label">${relLabel(p.relation)}</div>
-          ${p.waveText ? `<div class="profile-state-label">${T('todaySignal')}</div><div class="profile-state-value"><span class="wave-status ${getWaveAnimClass(p)}">${p.waveText}</span></div>${p._cycleLabel ? `<div style="font-size:11px;color:var(--text-faint);margin-top:4px">${p._cycleLabel} · день ${p._cycleDay}</div>` : ''}` : ''}
+          ${p.waveText ? `<div class="profile-state-label">${T('todaySignal')}</div><div class="profile-state-value">${p.waveText}</div>` : ''}
         </div>
       </div>
       ${adviceHtml}
@@ -2463,11 +2308,6 @@
       <div class="field" style="margin-top:22px"><label class="field-label">${T('addLikes')}</label><textarea class="field-input" id="editLikes">${p.likes || ''}</textarea></div>
       <div class="field"><label class="field-label">${T('addBirthday')}</label><input class="field-input" id="editBirthday" placeholder="${T('addBirthdayPh')}" value="${p.birthdate || ''}" /></div>
       <div class="field"><label class="field-label">${T('addRemember')}</label><textarea class="field-input" id="editRemember">${p.remember || ''}</textarea></div>
-      <div class="field">
-        <label class="field-label">Начало цикла</label>
-        <input class="field-input" type="date" id="editCycleStart" value="${p.cycleStart || ''}" />
-        <div style="margin-top:8px;font-size:11.5px;color:var(--text-faint);line-height:1.45;text-align:left">Позаботься о подруге в трудные дни.</div>
-      </div>
       <div class="advice-item" style="cursor:default;margin:0 18px 14px">
         <div class="advice-icon" style="background:rgba(240,169,78,0.15)">⭐</div>
         <div class="advice-text">${T('legendPriority')}</div>
@@ -2524,7 +2364,7 @@
     if (serverConnected) {
       apiFetch('/circle', {
         method: 'POST',
-        body: JSON.stringify({ name: p.name, relation: p.relation, likes: p.likes, remember: p.remember, birthdate: p.birthdate, cycle_start: p.cycleStart || null, priority: p.priorityTag, wishlist: [], dates: [], history: [] })
+        body: JSON.stringify({ name: p.name, relation: p.relation, likes: p.likes, remember: p.remember, birthdate: p.birthdate, priority: p.priorityTag, wishlist: [], dates: [], history: [] })
       }).then(data => {
         if (data.person) people[newKey].serverId = data.person.id;
       }).catch(err => console.warn('Не удалось сохранить нового человека на сервере:', err.message));
@@ -2538,8 +2378,6 @@
     p.remember = document.getElementById('editRemember').value;
     p.birthdate = document.getElementById('editBirthday').value;
     p.priorityTag = document.getElementById('editPriority').checked;
-    p.cycleStart = document.getElementById('editCycleStart').value || null;
-    applyCycleToPerson(p);
     const activeChip = document.querySelector('#editContent .relation-chip.active');
     if (activeChip) p.relation = activeChip.dataset.rel;
 
@@ -2554,17 +2392,17 @@
     if (serverConnected && p.serverId) {
       apiFetch('/circle/' + p.serverId, {
         method: 'PUT',
-        body: JSON.stringify({ name: p.name, relation: p.relation, likes: p.likes, remember: p.remember, birthdate: p.birthdate, cycle_start: p.cycleStart || null, priority: p.priorityTag, photo_url: p.photoDataUrl })
+        body: JSON.stringify({ name: p.name, relation: p.relation, likes: p.likes, remember: p.remember, birthdate: p.birthdate, priority: p.priorityTag, photo_url: p.photoDataUrl })
       }).catch(err => console.warn('Не удалось сохранить изменения на сервере:', err.message));
     }
   }
 
   function dismissDemoKey(key) {
     try {
-      const dismissed = JSON.parse(safeStorage.getItem('tendo_dismissed_demos') || '[]');
+      const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
       if (!dismissed.includes(key)) {
         dismissed.push(key);
-        safeStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
+        localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
       }
     } catch (e) { /* не критично */ }
   }
@@ -2745,19 +2583,18 @@
       rebuildCircle();
       showScreen('circle');
 
+      // Локальный сброс — делаем всегда, сразу, независимо от того, ответит ли
+      // сервер. Человек явно попросил удалить и начать с чистого листа — это
+      // не должно зависеть от временного сбоя сети.
+      localStorage.removeItem('tendo_session_token');
+      localStorage.removeItem('tendo_consent_given');
+      localStorage.removeItem('tendo_google_prompt_shown');
+      localStorage.removeItem('tendo_device_id');
+      localStorage.removeItem('tendo_dismissed_demos');
+      sessionToken = null;
+
       if (serverConnected) {
         apiFetch('/me', { method: 'DELETE' })
-          .then(() => {
-            // Полностью сбрасываем локальное состояние — при следующем открытии
-            // человек должен пройти согласие заново, а не молча получить новый
-            // анонимный аккаунт с видом "как будто ничего не произошло".
-            safeStorage.removeItem('tendo_session_token');
-            safeStorage.removeItem('tendo_consent_given');
-            safeStorage.removeItem('tendo_google_prompt_shown');
-            safeStorage.removeItem('tendo_device_id');
-            safeStorage.removeItem('tendo_dismissed_demos');
-            sessionToken = null;
-          })
           .catch(err => console.warn('Не удалось удалить аккаунт на сервере:', err.message));
       }
     }
@@ -2859,8 +2696,9 @@
     const todayList = document.getElementById('todayList');
     todayList.innerHTML = '';
 
+    // Пересчитываем "сколько дней до дня рождения" из настоящей даты рождения —
+    // только для тех, у кого дата реально указана (не для демо-заготовок вроде Оли).
     Object.values(people).forEach(p => {
-      applyCycleToPerson(p);
       if (p.birthdate && !p.isDemo) {
         const result = parseBirthdateToDaysUntil(p.birthdate);
         if (result && result.days <= 30) {
@@ -2872,75 +2710,39 @@
       }
     });
 
-    let list = Object.entries(people).filter(([k, p]) => hasOwnerWave(p) || p.priorityTag || !!p.birthdayInDays);
-    if (todayFilterState === 'wave') list = list.filter(([k, p]) => hasOwnerWave(p));
-    else if (todayFilterState === 'priority') list = list.filter(([k, p]) => p.priorityTag);
-    else if (todayFilterState === 'regular') list = list.filter(([k, p]) => !hasOwnerWave(p) && !p.priorityTag);
-    else if (todayFilterState === 'dates') list = list.filter(([k, p]) => !!p.birthdayInDays);
+    let withReason = Object.entries(people)
+      .filter(([k,p]) => p.type === 'wave' || p.birthdayInDays)
+      .sort((a,b) => (b[1].priorityTag ? 1 : 0) - (a[1].priorityTag ? 1 : 0));
 
-    list.sort((a, b) => {
-      const ra = statusRank(a[1]), rb = statusRank(b[1]);
-      if (ra !== rb) return ra - rb;
-      return (b[1].priorityTag ? 1 : 0) - (a[1].priorityTag ? 1 : 0);
-    });
+    if (todayFilterState === 'wave') withReason = withReason.filter(([k,p]) => p.type === 'wave');
+    else if (todayFilterState === 'priority') withReason = withReason.filter(([k,p]) => p.priorityTag);
+    else if (todayFilterState === 'regular') withReason = withReason.filter(([k,p]) => p.type !== 'wave' && !p.priorityTag);
+    else if (todayFilterState === 'dates') withReason = withReason.filter(([k,p]) => !!p.birthdayInDays);
 
-    if (list.length === 0) {
-      document.getElementById('todayCount').textContent = '0';
-      document.getElementById('todaySub').textContent = T('todayForCircle');
-      document.getElementById('todayEmptyNote').textContent = '';
-      return;
-    }
+    const noReason = Object.entries(people).filter(([k,p]) => !(p.type === 'wave' || p.birthdayInDays)).map(([k,p]) => p.name);
 
-    list.forEach(([key, p]) => {
+    withReason.forEach(([key,p]) => {
       const el = document.createElement('div');
       el.className = 'today-item';
       el.onclick = () => openPerson(key);
-      const isWave = hasOwnerWave(p);
-      const great = isWave && isGreatMood(p);
-      let sub = '';
-      if (isWave && great) sub = `<span class="wv">WAVE</span> · ❤️ Всё супер`;
-      else if (isWave && p.priorityTag) sub = `<span class="wv">WAVE</span> · ${p.waveText || T('waveSignal')} · ${T('legendPriority')}`;
-      else if (isWave) sub = `<span class="wv">WAVE</span> · ${p.waveText || T('waveSignal')}`;
-      else if (p.priorityTag && p.birthdayInDays) sub = `${T('legendPriority')} · ${T('birthdayIn')(p.birthdayInDays, p.name)}`;
-      else if (p.priorityTag) sub = T('legendPriority');
-      else if (p.birthdayInDays) sub = T('birthdayIn')(p.birthdayInDays, p.name);
-
-      const prefs = [];
-      if (p.likes) prefs.push(p.likes);
-      if (p.remember) prefs.push(p.remember);
-      if (p.advice && p.advice[0] && p.advice[0].text) prefs.push(p.advice[0].text);
-      const prefsHtml = prefs.length
-        ? `<div class="ti-prefs" style="font-size:11px;color:var(--text-faint);margin-top:4px;line-height:1.35">${prefs.slice(0,2).map(x => escapeHtmlApp(x)).join(' · ')}</div>`
-        : '';
-
-      const avatarStyle = p.photoDataUrl ? '' : `background:linear-gradient(150deg,${p.colors[0]},${p.colors[1]})`;
-      const avatarInner = p.photoDataUrl
-        ? `<img src="${p.photoDataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-        : silhouette;
-
-      if (isWave) {
+      if (p.type === 'wave') {
         el.innerHTML = `
-          <div class="ti-avatar wave"><div class="ti-avatar-inner" style="${avatarStyle}">${avatarInner}</div><div class="ti-badge w">${waveBadgeSvg}</div></div>
-          <div style="flex:1;min-width:0"><div class="ti-name">${p.name}</div><div class="ti-sub">${sub}</div>${prefsHtml}</div>
-          <svg class="ti-chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
-      } else if (p.birthdayInDays) {
-        el.innerHTML = `
-          <div class="date-icon-wrap">${dateIconSvg}</div>
-          <div style="flex:1;min-width:0"><div class="ti-name">${p.name}</div><div class="ti-sub">${sub}</div>${prefsHtml}</div>
-          <svg class="ti-chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
+          <div class="ti-avatar wave"><div class="ti-avatar-inner" style="${p.photoDataUrl ? '' : 'background:linear-gradient(150deg,'+p.colors[0]+','+p.colors[1]+')'}">${p.photoDataUrl ? `<img src="${p.photoDataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : silhouette}</div><div class="ti-badge w">${waveBadgeSvg}</div></div>
+          <div><div class="ti-name">${p.name}</div><div class="ti-sub"><span class="wv">WAVE</span> · ${T('waveSignal')}</div></div>
+          <span class="ti-time">09:00</span><svg class="ti-chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
       } else {
         el.innerHTML = `
-          <div class="ti-avatar priority"><div class="ti-avatar-inner" style="${avatarStyle}">${avatarInner}</div><div class="ti-badge s">${starBadgeSvg}</div></div>
-          <div style="flex:1;min-width:0"><div class="ti-name">${p.name}</div><div class="ti-sub">${sub}</div>${prefsHtml}</div>
-          <svg class="ti-chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
+          <div class="date-icon-wrap">${dateIconSvg}</div>
+          <div><div class="ti-name">${T('birthdayIn')(p.birthdayInDays, escapeHtmlApp(p.name))}</div><div class="ti-sub">${escapeHtmlApp(p.birthdayDate)}</div></div>
+          <span class="ti-time">09:00</span><svg class="ti-chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>`;
       }
       todayList.appendChild(el);
     });
 
-    const adviceWord = pluralRu(list.length, T('adviceWord'));
-    document.getElementById('todayCount').textContent = list.length;
-    document.getElementById('todaySub').textContent = list.length + ' ' + adviceWord + ' ' + T('todayForCircle');
-    document.getElementById('todayEmptyNote').textContent = '';
+    const adviceWord = pluralRu(withReason.length, T('adviceWord'));
+    document.getElementById('todayCount').textContent = withReason.length;
+    document.getElementById('todaySub').textContent = withReason.length + ' ' + adviceWord + ' ' + T('todayForCircle');
+    document.getElementById('todayEmptyNote').textContent = noReason.length > 0 ? (noReason.join(', ') + ' ' + T('noReasonSuffix')) : '';
   }
 
   applyStaticTranslations();
@@ -2948,7 +2750,7 @@
   fitToScreen();
   // Возвращающемуся пользователю (уже дал согласие раньше) не нужно снова
   // показывать экран согласия и выбор входа — сразу открываем круг.
-  if (safeStorage.getItem('tendo_consent_given') === 'true') {
+  if (localStorage.getItem('tendo_consent_given') === 'true') {
     showScreen('circle');
   }
 
