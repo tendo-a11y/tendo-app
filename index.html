@@ -1833,6 +1833,17 @@
     }
   }
   let sessionToken = localStorage.getItem('tendo_session_token');
+  // Отслеживаем ВСЕ важные фоновые сохранения (новый человек, замена демо,
+  // отклонённые демо) — чтобы при выходе из аккаунта можно было дождаться их
+  // завершения перед перезагрузкой страницы, а не терять данные из-за гонки.
+  let pendingCriticalSaves = [];
+  function trackCriticalSave(promise) {
+    pendingCriticalSaves.push(promise);
+    promise.finally(() => {
+      pendingCriticalSaves = pendingCriticalSaves.filter(p => p !== promise);
+    });
+    return promise;
+  }
   let serverConnected = false;
 
   async function apiFetch(path, options = {}) {
@@ -2211,10 +2222,10 @@
     showScreen('circle');
 
     if (serverConnected) {
-      apiFetch('/circle', {
+      trackCriticalSave(apiFetch('/circle', {
         method: 'POST',
         body: JSON.stringify({ name, relation, likes, remember, birthdate, priority: priorityTag, photo_url: photoToSave, wishlist: [], dates: [], history: [] })
-      }).then(data => {
+      })).then(data => {
         if (data.person) people[key].serverId = data.person.id;
       }).catch(err => {
         if (err.code === 'free_limit_reached') {
@@ -2532,10 +2543,10 @@
     openPerson(newKey);
 
     if (serverConnected) {
-      apiFetch('/circle', {
+      trackCriticalSave(apiFetch('/circle', {
         method: 'POST',
         body: JSON.stringify({ name: p.name, relation: p.relation, likes: p.likes, remember: p.remember, birthdate: p.birthdate, priority: p.priorityTag, wishlist: [], dates: [], history: [] })
-      }).then(data => {
+      })).then(data => {
         if (data.person) people[newKey].serverId = data.person.id;
       }).catch(err => {
         if (err.code === 'free_limit_reached') {
@@ -2586,8 +2597,10 @@
   function saveDismissedDemos(dismissed) {
     localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
     if (serverConnected) {
-      apiFetch('/me/dismissed-demos', { method: 'PUT', body: JSON.stringify({ dismissed }) })
-        .catch(err => console.warn('Не удалось сохранить отклонённые демо на сервере:', err.message));
+      trackCriticalSave(
+        apiFetch('/me/dismissed-demos', { method: 'PUT', body: JSON.stringify({ dismissed }) })
+          .catch(err => console.warn('Не удалось сохранить отклонённые демо на сервере:', err.message))
+      );
     }
   }
 
@@ -2761,15 +2774,11 @@
 
   async function handleLogoutClick() {
     if (!confirm(T('logoutConfirm'))) return;
-    // Перед выходом гарантированно досылаем актуальный список отклонённых демо
-    // на сервер и ЖДЁМ ответа — иначе, при настоящей сетевой задержке (не как на
-    // localhost), последнее фоновое сохранение могло не успеть дойти до сервера
-    // до того, как страница перезагрузится.
-    if (serverConnected) {
-      try {
-        const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
-        await apiFetch('/me/dismissed-demos', { method: 'PUT', body: JSON.stringify({ dismissed }) });
-      } catch (e) { /* не критично — выходим в любом случае */ }
+    // Ждём завершения ВСЕХ важных фоновых сохранений (новый человек, замена
+    // демо, отклонённые демо) — иначе, при настоящей сетевой задержке, данные
+    // могли не успеть дойти до сервера до перезагрузки страницы.
+    if (pendingCriticalSaves.length > 0) {
+      await Promise.allSettled(pendingCriticalSaves);
     }
     // Просто забываем локальную сессию — на сервере ничего не удаляется,
     // данные останутся доступны при следующем входе тем же аккаунтом.
