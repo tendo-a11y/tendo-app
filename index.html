@@ -932,6 +932,7 @@
       qlAbout: "О ней", qlWishlist: "Wish List", qlDates: "Даты", qlHistory: "История", qlEdit: "Изменить", qlInvite: "Пригласить",
       inviteManual: "Добавить вручную", inviteManualDesc: "заполни то, что знаешь о человеке сам",
       inviteLink: "Пригласить по ссылке", inviteLinkDesc: "Друг перейдёт по ссылке, зарегистрируется — и автоматически появится в твоём круге как настоящий, связанный человек.",
+      referralInviteMsg: "Привет! Я пользуюсь Tendo, чтобы проявлять больше заботы — не забывать о важном для тебя и других близких, включая важные даты. Заходи: ",
       referralLinkLoading: "Загрузка ссылки…", referralLinkCopied: "Скопировано ✓", copyReferralLinkBtn: "Скопировать ссылку",
       adviceTitle: "Советы на сегодня", variant: ["вариант","варианта","вариантов"],
       noAdvice: (name) => `Сегодня для ${name} нет повода для совета — и это нормально.<br>Появится, как только будет что предложить.`,
@@ -1030,6 +1031,7 @@
       qlAbout: "Про неї", qlWishlist: "Wish List", qlDates: "Дати", qlHistory: "Історія", qlEdit: "Змінити", qlInvite: "Запросити",
       inviteManual: "Додати вручну", inviteManualDesc: "заповни те, що сам знаєш про людину",
       inviteLink: "Запросити за посиланням", inviteLinkDesc: "Друг перейде за посиланням, зареєструється — і автоматично з'явиться у твоєму колі як справжня, пов'язана людина.",
+      referralInviteMsg: "Привіт! Я користуюся Tendo, щоб проявляти більше турботи — не забувати про важливе для тебе та інших близьких, включно з важливими датами. Заходь: ",
       referralLinkLoading: "Завантаження посилання…", referralLinkCopied: "Скопійовано ✓", copyReferralLinkBtn: "Скопіювати посилання",
       adviceTitle: "Поради на сьогодні", variant: ["варіант","варіанти","варіантів"],
       noAdvice: (name) => `Сьогодні для ${name} немає приводу для поради — і це нормально.<br>З'явиться, щойно буде що запропонувати.`,
@@ -1128,6 +1130,7 @@
       qlAbout: "About", qlWishlist: "Wish List", qlDates: "Dates", qlHistory: "History", qlEdit: "Edit", qlInvite: "Invite",
       inviteManual: "Add manually", inviteManualDesc: "fill in what you know about them yourself",
       inviteLink: "Invite by link", inviteLinkDesc: "Your friend follows the link, signs up — and automatically appears in your circle as a real, connected person.",
+      referralInviteMsg: "Hey! I use Tendo to be more thoughtful — to not forget what matters to you and other people close to me, including important dates. Check it out: ",
       referralLinkLoading: "Loading link…", referralLinkCopied: "Copied ✓", copyReferralLinkBtn: "Copy link",
       adviceTitle: "Today's tips", variant: ["option","options","options"],
       noAdvice: (name) => `There's no reason for a tip for ${name} today — and that's fine.<br>It'll appear as soon as there's something to suggest.`,
@@ -1226,6 +1229,7 @@
       qlAbout: "Despre ea", qlWishlist: "Wish List", qlDates: "Date", qlHistory: "Istoric", qlEdit: "Editează", qlInvite: "Invită",
       inviteManual: "Adaugă manual", inviteManualDesc: "completezi tu ce știi despre persoană",
       inviteLink: "Invită prin link", inviteLinkDesc: "Prietenul tau urmeaza linkul, se inregistreaza - si apare automat in cercul tau ca o persoana reala, conectata.",
+      referralInviteMsg: "Salut! Folosesc Tendo ca sa fiu mai atent - sa nu uit ce conteaza pentru tine si pentru alti oameni apropiati mie, inclusiv datele importante. Vezi si tu: ",
       referralLinkLoading: "Se incarca linkul…", referralLinkCopied: "Copiat ✓", copyReferralLinkBtn: "Copiaza linkul",
       adviceTitle: "Sfaturi pentru azi", variant: ["variantă","variante","variante"],
       noAdvice: (name) => `Azi nu există un motiv pentru un sfat pentru ${name} — și e normal.<br>Va apărea de îndată ce va fi ceva de sugerat.`,
@@ -2409,6 +2413,7 @@
   function copyReferralLink() {
     if (!ownerProfile.referralCode) return;
     const link = `https://tendo-a11y.github.io/tendo-app/?ref=${ownerProfile.referralCode}`;
+    const fullText = T('referralInviteMsg') + link;
     const finish = () => {
       const box = document.getElementById('referralLinkBox');
       const original = box.textContent;
@@ -2417,7 +2422,7 @@
       setTimeout(() => { box.textContent = original; box.style.color = ''; }, 2000);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(link).then(finish).catch(finish);
+      navigator.clipboard.writeText(fullText).then(finish).catch(finish);
     } else {
       finish();
     }
