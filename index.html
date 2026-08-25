@@ -1993,19 +1993,6 @@
             };
           }
         });
-        // Как только у пользователя реально есть хоть один настоящий человек в
-        // круге — демо-карточки больше не нужны и не должны "накладываться"
-        // поверх реальных данных. Убираем их все разом и запоминаем это, чтобы
-        // они не появлялись снова при следующих открытиях.
-        const demoKeysStillPresent = Object.keys(people).filter(k => people[k].isDemo);
-        if (demoKeysStillPresent.length > 0) {
-          const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
-          demoKeysStillPresent.forEach(key => {
-            delete people[key];
-            if (!dismissed.includes(key)) dismissed.push(key);
-          });
-          saveDismissedDemos(dismissed);
-        }
         rebuildCircle();
       }
     } catch (err) {
@@ -2201,6 +2188,15 @@
     const colors = colorPool[Object.keys(people).length % colorPool.length];
     people[key] = { name, relation, angle: 0, type: 'regular', badge: null, colors, waveText: null, priorityTag,
       photoDataUrl: photoToSave, likes, remember, birthdate, wishlist: [], extraDates: [], history: [], advice: [] };
+
+    // Каждый добавленный настоящий человек "съедает" одну демо-карточку —
+    // так круг всегда показывает ровно 8 карточек, пока демо не закончатся.
+    const remainingDemoKey = Object.keys(people).find(k => people[k].isDemo);
+    if (remainingDemoKey) {
+      delete people[remainingDemoKey];
+      dismissDemoKey(remainingDemoKey);
+    }
+
     document.getElementById('newName').value = '';
     document.getElementById('newLikes').value = '';
     document.getElementById('newBirthday').value = '';
@@ -2223,6 +2219,12 @@
       }).catch(err => {
         if (err.code === 'free_limit_reached') {
           delete people[key];
+          // Откатываем и "съеденную" демо-карточку, раз само добавление не удалось
+          if (remainingDemoKey && !people[remainingDemoKey]) {
+            people[remainingDemoKey] = JSON.parse(JSON.stringify(ORIGINAL_DEMO_DATA[remainingDemoKey]));
+            const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
+            saveDismissedDemos(dismissed.filter(k => k !== remainingDemoKey));
+          }
           rebuildCircle();
           alert(err.message);
         } else {
