@@ -2759,8 +2759,18 @@
 
   let deleteConfirmPending = false;
 
-  function handleLogoutClick() {
+  async function handleLogoutClick() {
     if (!confirm(T('logoutConfirm'))) return;
+    // Перед выходом гарантированно досылаем актуальный список отклонённых демо
+    // на сервер и ЖДЁМ ответа — иначе, при настоящей сетевой задержке (не как на
+    // localhost), последнее фоновое сохранение могло не успеть дойти до сервера
+    // до того, как страница перезагрузится.
+    if (serverConnected) {
+      try {
+        const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
+        await apiFetch('/me/dismissed-demos', { method: 'PUT', body: JSON.stringify({ dismissed }) });
+      } catch (e) { /* не критично — выходим в любом случае */ }
+    }
     // Просто забываем локальную сессию — на сервере ничего не удаляется,
     // данные останутся доступны при следующем входе тем же аккаунтом.
     localStorage.removeItem('tendo_session_token');
