@@ -12,8 +12,9 @@
   // старую сохранённую копию страницы. Эта проверка работает изнутри уже открытой
   // страницы — независимо от того, откуда она была загружена — и сама
   // перезагружает страницу, если версия на сервере обновилась.
-  // ВАЖНО: при каждом значимом обновлении index.html меняй PAGE_VERSION ниже.
-  const PAGE_VERSION = '2026-08-25-001';
+  // Номер версии генерируется автоматически (текущей датой и временем) отдельным
+  // шагом перед каждой отправкой файла — не вписывается вручную, чтобы не забыть.
+  const PAGE_VERSION = '2026-08-25-2010';
   (function checkForFreshVersion() {
     try {
       fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
@@ -893,30 +894,9 @@
       <div class="section-head">
         <span class="section-title" data-i18n="inviteLink">Пригласить по ссылке</span>
       </div>
-      <div class="empty-advice" style="text-align:left;padding-bottom:10px" data-i18n="inviteLinkDesc">человек сам зарегистрируется и заполнит о себе</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 4px">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer" onclick="inviteVia('telegram')">
-          <div class="ic" style="background:rgba(64,159,222,0.15)"><svg viewBox="0 0 24 24" fill="#42a5e0" width="20" height="20"><path d="M21.5 4.5L2.7 11.8c-1.2.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.1-2 4.4 3.2c.8.5 1.4.2 1.6-.7l2.9-13.8c.3-1.2-.4-1.7-1.4-1.4z"/></svg></div>
-          <span style="font-size:9.5px;color:var(--text-dim);text-align:center">Telegram</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer" onclick="inviteVia('instagram')">
-          <div class="ic" style="background:rgba(220,80,150,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#e0508f" stroke-width="1.8" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
-          <span style="font-size:9.5px;color:var(--text-dim);text-align:center">Instagram</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer" onclick="inviteVia('contacts')">
-          <div class="ic" style="background:rgba(140,150,240,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#8c96f0" stroke-width="1.8" width="20" height="20"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></div>
-          <span style="font-size:9.5px;color:var(--text-dim);text-align:center">Контакты</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer" onclick="inviteVia('phone')">
-          <div class="ic" style="background:rgba(90,200,140,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#5ac88c" stroke-width="1.8" width="20" height="20"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .3 2 .7 3a2 2 0 01-.5 2.1L8 10a16 16 0 006 6l1.2-1.3a2 2 0 012.1-.5c1 .4 2 .6 3 .7a2 2 0 011.7 2.1z"/></svg></div>
-          <span style="font-size:9.5px;color:var(--text-dim);text-align:center">Телефон</span>
-        </div>
-      </div>
-
-      <div style="padding:8px 4px 0">
-        <input class="field-input" id="instagramLinkInput" data-i18n-ph="instagramLinkPh" placeholder="ссылка на профиль в Instagram (необязательно)" style="padding:8px 10px;font-size:11px;width:100%;box-sizing:border-box" />
-      </div>
-      <div class="empty-advice" style="text-align:left;padding-top:6px" data-i18n="inviteLinkFieldHint">Telegram сам предложит готовое сообщение и выбор получателя. Для Instagram можно указать профиль конкретного человека — текст скопируется отдельно.</div>
+      <div class="empty-advice" style="text-align:left;padding-bottom:14px" data-i18n="inviteLinkDesc">Друг перейдёт по ссылке, зарегистрируется — и автоматически появится в твоём круге как настоящий, связанный человек.</div>
+      <div id="referralLinkBox" style="background:var(--card-2);border:1px solid var(--card-border);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--text-dim);word-break:break-all;margin-bottom:12px">…</div>
+      <button class="save-btn" onclick="copyReferralLink()" data-i18n="copyReferralLinkBtn">Скопировать ссылку</button>
     </div>
   </div>
 </div>
@@ -951,12 +931,8 @@
       addButton: "Добавить в круг", addNeedName: "Введи имя — без него пока не получится добавить человека.",
       qlAbout: "О ней", qlWishlist: "Wish List", qlDates: "Даты", qlHistory: "История", qlEdit: "Изменить", qlInvite: "Пригласить",
       inviteManual: "Добавить вручную", inviteManualDesc: "заполни то, что знаешь о человеке сам",
-      inviteLink: "Пригласить по ссылке", inviteLinkDesc: "человек сам зарегистрируется и заполнит о себе. Выбери любой мессенджер — разницы нет, просто где другу удобнее увидеть сообщение.",
-      inviteMsg: (name) => `${name} хочет быть внимательнее к тебе — присоединяйся к Tendo`,
-      inviteGenericMsg: "Привет! Я пользуюсь Tendo, чтобы проявлять больше заботы — не забывать о важном для тебя и других близких, включая важные даты. Заходи: https://tendo-a11y.github.io/tendo-app/", inviteCopied: "Ссылка скопирована ✓",
-      inviteNextStep: "Текст приглашения скопирован ✓\n\nСейчас откроется чат — просто вставь скопированный текст (зажми поле ввода → «Вставить») и отправь.",
-      instagramLinkPh: "ссылка на профиль", inviteLinkFieldHint: "Telegram сам предложит готовое сообщение и выбор получателя. Для Instagram можно указать профиль конкретного человека — текст скопируется отдельно.",
-      inviteCopied: "Ссылка скопирована ✓",
+      inviteLink: "Пригласить по ссылке", inviteLinkDesc: "Друг перейдёт по ссылке, зарегистрируется — и автоматически появится в твоём круге как настоящий, связанный человек.",
+      referralLinkLoading: "Загрузка ссылки…", referralLinkCopied: "Скопировано ✓", copyReferralLinkBtn: "Скопировать ссылку",
       adviceTitle: "Советы на сегодня", variant: ["вариант","варианта","вариантов"],
       noAdvice: (name) => `Сегодня для ${name} нет повода для совета — и это нормально.<br>Появится, как только будет что предложить.`,
       todaySignal: "Сегодня отметила:",
@@ -1053,12 +1029,8 @@
       addButton: "Додати в коло", addNeedName: "Введи ім'я — без нього поки не вийде додати людину.",
       qlAbout: "Про неї", qlWishlist: "Wish List", qlDates: "Дати", qlHistory: "Історія", qlEdit: "Змінити", qlInvite: "Запросити",
       inviteManual: "Додати вручну", inviteManualDesc: "заповни те, що сам знаєш про людину",
-      inviteLink: "Запросити за посиланням", inviteLinkDesc: "людина сама зареєструється і заповнить про себе. Обери будь-який месенджер — різниці немає, просто де другові зручніше побачити повідомлення.",
-      inviteMsg: (name) => `${name} хоче бути уважнішим до тебе — приєднуйся до Tendo`,
-      inviteGenericMsg: "Привіт! Я користуюся Tendo, щоб проявляти більше турботи — не забувати про важливе для тебе та інших близьких, включно з важливими датами. Заходь: https://tendo-a11y.github.io/tendo-app/", inviteCopied: "Посилання скопійовано ✓",
-      inviteNextStep: "Текст запрошення скопійовано ✓\n\nЗараз відкриється чат — просто встав скопійований текст (затисни поле вводу → «Вставити») і надішли.",
-      instagramLinkPh: "посилання на профіль", inviteLinkFieldHint: "Telegram сам запропонує готове повідомлення і вибір отримувача. Для Instagram можна вказати профіль конкретної людини — текст скопіюється окремо.",
-      inviteCopied: "Посилання скопійовано ✓",
+      inviteLink: "Запросити за посиланням", inviteLinkDesc: "Друг перейде за посиланням, зареєструється — і автоматично з'явиться у твоєму колі як справжня, пов'язана людина.",
+      referralLinkLoading: "Завантаження посилання…", referralLinkCopied: "Скопійовано ✓", copyReferralLinkBtn: "Скопіювати посилання",
       adviceTitle: "Поради на сьогодні", variant: ["варіант","варіанти","варіантів"],
       noAdvice: (name) => `Сьогодні для ${name} немає приводу для поради — і це нормально.<br>З'явиться, щойно буде що запропонувати.`,
       todaySignal: "Сьогодні відзначила:",
@@ -1155,12 +1127,8 @@
       addButton: "Add to circle", addNeedName: "Enter a name — you can't add a person without one yet.",
       qlAbout: "About", qlWishlist: "Wish List", qlDates: "Dates", qlHistory: "History", qlEdit: "Edit", qlInvite: "Invite",
       inviteManual: "Add manually", inviteManualDesc: "fill in what you know about them yourself",
-      inviteLink: "Invite by link", inviteLinkDesc: "they sign up themselves and fill in their own info. Pick either messenger — no real difference, just wherever your friend will see it first.",
-      inviteMsg: (name) => `${name} wants to be more thoughtful with you — join Tendo`,
-      inviteGenericMsg: "Hey! I use Tendo to be more thoughtful — to not forget what matters to you and other people close to me, including important dates. Check it out: https://tendo-a11y.github.io/tendo-app/", inviteCopied: "Link copied ✓",
-      inviteNextStep: "Invite text copied ✓\n\nA chat will open now — just paste the copied text (hold the input field → \"Paste\") and send it.",
-      instagramLinkPh: "profile link", inviteLinkFieldHint: "Telegram will offer a ready-made message and let you pick who to send it to. For Instagram you can enter a specific profile — the text will be copied separately.",
-      inviteCopied: "Link copied ✓",
+      inviteLink: "Invite by link", inviteLinkDesc: "Your friend follows the link, signs up — and automatically appears in your circle as a real, connected person.",
+      referralLinkLoading: "Loading link…", referralLinkCopied: "Copied ✓", copyReferralLinkBtn: "Copy link",
       adviceTitle: "Today's tips", variant: ["option","options","options"],
       noAdvice: (name) => `There's no reason for a tip for ${name} today — and that's fine.<br>It'll appear as soon as there's something to suggest.`,
       todaySignal: "Marked today:",
@@ -1257,12 +1225,8 @@
       addButton: "Adaugă în cerc", addNeedName: "Introdu un nume — fără el nu poți adăuga încă o persoană.",
       qlAbout: "Despre ea", qlWishlist: "Wish List", qlDates: "Date", qlHistory: "Istoric", qlEdit: "Editează", qlInvite: "Invită",
       inviteManual: "Adaugă manual", inviteManualDesc: "completezi tu ce știi despre persoană",
-      inviteLink: "Invită prin link", inviteLinkDesc: "persoana se înregistrează singură și își completează datele. Alege orice mesager - nu conteaza care, doar unde prietenul tau vede mesajul mai repede.",
-      inviteMsg: (name) => `${name} vrea să fie mai atent cu tine — alătură-te Tendo`,
-      inviteGenericMsg: "Salut! Folosesc Tendo ca sa fiu mai atent - sa nu uit ce conteaza pentru tine si pentru alti oameni apropiati mie, inclusiv datele importante. Vezi si tu: https://tendo-a11y.github.io/tendo-app/", inviteCopied: "Link copiat ✓",
-      inviteNextStep: "Textul invitatiei a fost copiat ✓\n\nSe va deschide un chat - lipeste textul copiat (tine apasat campul de text → \"Lipeste\") si trimite-l.",
-      instagramLinkPh: "link profil", inviteLinkFieldHint: "Telegram va oferi un mesaj gata pregatit si alegerea destinatarului. Pentru Instagram poti introduce un profil anume - textul se va copia separat.",
-      inviteCopied: "Link copiat ✓",
+      inviteLink: "Invită prin link", inviteLinkDesc: "Prietenul tau urmeaza linkul, se inregistreaza - si apare automat in cercul tau ca o persoana reala, conectata.",
+      referralLinkLoading: "Se incarca linkul…", referralLinkCopied: "Copiat ✓", copyReferralLinkBtn: "Copiaza linkul",
       adviceTitle: "Sfaturi pentru azi", variant: ["variantă","variante","variante"],
       noAdvice: (name) => `Azi nu există un motiv pentru un sfat pentru ${name} — și e normal.<br>Va apărea de îndată ce va fi ceva de sugerat.`,
       todaySignal: "Azi a notat:",
@@ -1488,7 +1452,7 @@
     { date: '2026-08-21', title: 'Советы стали честнее', text: 'Ежедневные советы теперь собираются напрямую из твоих данных, без риска что-то выдумать.' }
   ];
 
-  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null, wishlist: [] };
+  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null, wishlist: [], referralCode: null };
 
   function handleOwnerPhotoSelect(event) {
     const file = event.target.files[0];
@@ -1808,7 +1772,7 @@
     try {
       const data = await apiFetch('/auth/google', {
         method: 'POST',
-        body: JSON.stringify({ idToken: response.credential, language: currentLang })
+        body: JSON.stringify({ idToken: response.credential, language: currentLang, ref: referralCodeFromUrl })
       });
       sessionToken = data.sessionToken;
       localStorage.setItem('tendo_session_token', sessionToken);
@@ -1833,6 +1797,11 @@
       else alert('Не удалось войти через Google, попробуй ещё раз.');
     }
   }
+  // Захватываем реферальный код из ссылки (?ref=КОД), если человек пришёл по
+  // приглашению — понадобится при регистрации, чтобы связать его с пригласившим.
+  const urlParams = new URLSearchParams(window.location.search);
+  const referralCodeFromUrl = urlParams.get('ref');
+
   let sessionToken = localStorage.getItem('tendo_session_token');
   // Отслеживаем ВСЕ важные фоновые сохранения (новый человек, замена демо,
   // отклонённые демо) — чтобы при выходе из аккаунта можно было дождаться их
@@ -1912,6 +1881,8 @@
       const data = await apiFetch('/me');
       if (data.user) {
         isRealAccount = !!(data.user.google_id && !data.user.google_id.startsWith('device_'));
+        ownerProfile.referralCode = data.user.referral_code || null;
+        renderReferralLink();
 
         // Сверяем список отклонённых демо с сервером — источником истины для
         // ЭТОГО аккаунта. Если вошли другим Google-аккаунтом на том же
@@ -2422,49 +2393,31 @@
 
   function openInvite() {
     showScreen('invite');
+    renderReferralLink();
   }
 
-  function inviteVia(channel) {
-    const text = T('inviteGenericMsg');
-    const encoded = encodeURIComponent(text);
-
-    if (channel === 'telegram') {
-      // Telegram умеет открыть готовое сообщение сразу с текстом — человек только
-      // выбирает, кому отправить, ничего вставлять вручную не нужно.
-      window.open(`https://t.me/share/url?url=&text=${encoded}`, '_blank');
-    } else if (channel === 'instagram') {
-      // У Instagram, в отличие от Telegram, нет способа заранее заполнить текст
-      // сообщения — сайты специально лишены такой возможности. Поэтому здесь
-      // копируем текст и просим вставить вручную.
-      const raw = document.getElementById('instagramLinkInput').value.trim();
-      copyInviteText(text);
-      alert(T('inviteNextStep'));
-      if (raw) {
-        const url = raw.startsWith('http') ? raw : `https://instagram.com/${raw.replace(/^@/, '')}`;
-        window.open(url, '_blank');
-      } else {
-        window.open('https://instagram.com', '_blank');
-      }
-    } else if (channel === 'phone') {
-      window.location.href = `sms:?body=${encoded}`;
-    } else if (channel === 'contacts' && navigator.contacts && navigator.contacts.select) {
-      navigator.contacts.select(['name', 'tel'], { multiple: false }).catch(() => {});
-      copyInviteText(text);
-    } else {
-      copyInviteText(text);
+  function renderReferralLink() {
+    const box = document.getElementById('referralLinkBox');
+    if (!box) return;
+    if (!ownerProfile.referralCode) {
+      box.textContent = T('referralLinkLoading');
+      return;
     }
+    box.textContent = `https://tendo-a11y.github.io/tendo-app/?ref=${ownerProfile.referralCode}`;
   }
 
-  function copyInviteText(text) {
+  function copyReferralLink() {
+    if (!ownerProfile.referralCode) return;
+    const link = `https://tendo-a11y.github.io/tendo-app/?ref=${ownerProfile.referralCode}`;
     const finish = () => {
-      const desc = document.querySelector('#screen-invite .empty-advice');
-      const original = desc.textContent;
-      desc.textContent = T('inviteCopied');
-      desc.style.color = 'var(--wave)';
-      setTimeout(() => { desc.textContent = original; desc.style.color = ''; }, 2000);
+      const box = document.getElementById('referralLinkBox');
+      const original = box.textContent;
+      box.textContent = T('referralLinkCopied');
+      box.style.color = 'var(--wave)';
+      setTimeout(() => { box.textContent = original; box.style.color = ''; }, 2000);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(finish).catch(finish);
+      navigator.clipboard.writeText(link).then(finish).catch(finish);
     } else {
       finish();
     }
