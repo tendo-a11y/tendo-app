@@ -13,7 +13,7 @@
   // страницы — независимо от того, откуда она была загружена — и сама
   // перезагружает страницу, если версия на сервере обновилась.
   // ВАЖНО: при каждом значимом обновлении index.html меняй PAGE_VERSION ниже.
-  const PAGE_VERSION = '2026-08-22-001';
+  const PAGE_VERSION = '2026-08-25-001';
   (function checkForFreshVersion() {
     try {
       fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
