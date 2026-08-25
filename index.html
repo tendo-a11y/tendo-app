@@ -689,6 +689,12 @@
     <div class="save-bar"><button class="save-btn" onclick="confirmArchive()" data-i18n="archiveConfirm">Архивировать</button></div>
 
     <div class="section" style="margin-top:8px">
+      <div class="section-head"><span class="section-title" data-i18n="logoutSectionTitle">Выйти из аккаунта</span></div>
+      <div class="empty-advice" style="text-align:left;padding-bottom:10px" data-i18n="logoutSectionDesc">Данные останутся на сервере — сможешь войти снова тем же Google-аккаунтом в любой момент, на любом устройстве.</div>
+      <button class="save-btn" style="background:rgba(255,255,255,0.08);color:var(--text-dim);box-shadow:none" onclick="handleLogoutClick()" data-i18n="logoutBtn">Выйти</button>
+    </div>
+
+    <div class="section" style="margin-top:8px">
       <div class="section-head"><span class="section-title" style="color:var(--wave)" data-i18n="deleteSectionTitle">Удалить безвозвратно</span></div>
       <div class="empty-advice" style="text-align:left;padding-bottom:10px" data-i18n="deleteSectionDesc">Все данные удалятся навсегда. Это нельзя отменить.</div>
       <button class="save-btn" id="deleteForeverBtn" style="background:rgba(226,75,74,0.15);color:#e24b4a;box-shadow:none" onclick="handleDeleteForeverClick()" data-i18n="deleteForeverStep1">Удалить всё безвозвратно</button>
@@ -985,6 +991,7 @@
       archivedBannerTitle: "Данные в архиве", archivedBannerDesc: (date) => `Круг скрыт до ${date}. Ничего не удалено — открой приложение снова, и всё будет на месте.`,
       restoreNow: "Восстановить сейчас",
       pauseOrDelete: "Удалить / Пауза", deleteSectionTitle: "Удалить безвозвратно", deleteSectionDesc: "Все данные удалятся навсегда. Это нельзя отменить.",
+      logoutSectionTitle: "Выйти из аккаунта", logoutSectionDesc: "Данные останутся на сервере — сможешь войти снова тем же Google-аккаунтом в любой момент, на любом устройстве.", logoutBtn: "Выйти", logoutConfirm: "Выйти из аккаунта на этом устройстве? Данные не удалятся, сможешь войти снова.",
       deleteForeverStep1: "Удалить всё безвозвратно", deleteForeverStep2: "Точно? Нажми ещё раз, чтобы удалить", deletePersonBtn: "Удалить этого человека", deletePersonConfirm: "Точно? Нажми ещё раз",
       demoPersonNote: "Это демо-пример для показа возможностей. Отредактируй карточку, чтобы заменить своим настоящим человеком, или просто убери её.", demoReplaceBtn: "Заменить своим человеком", demoDismissBtn: "Убрать",
       langSection: "Язык",
@@ -1086,6 +1093,7 @@
       archivedBannerTitle: "Дані в архіві", archivedBannerDesc: (date) => `Коло сховано до ${date}. Нічого не видалено — відкрий застосунок знову, і все буде на місці.`,
       restoreNow: "Відновити зараз",
       pauseOrDelete: "Видалити / Пауза", deleteSectionTitle: "Видалити безповоротно", deleteSectionDesc: "Усі дані видаляться назавжди. Це не можна скасувати.",
+      logoutSectionTitle: "Вийти з акаунту", logoutSectionDesc: "Дані залишаться на сервері — зможеш увійти знову тим самим Google-акаунтом у будь-який момент, на будь-якому пристрої.", logoutBtn: "Вийти", logoutConfirm: "Вийти з акаунту на цьому пристрої? Дані не видаляться, зможеш увійти знову.",
       deleteForeverStep1: "Видалити все безповоротно", deleteForeverStep2: "Точно? Натисни ще раз, щоб видалити", deletePersonBtn: "Видалити цю людину", deletePersonConfirm: "Точно? Натисни ще раз",
       demoPersonNote: "Це демо-приклад для показу можливостей. Відредагуй картку, щоб замінити своєю справжньою людиною, або просто прибери її.", demoReplaceBtn: "Замінити своєю людиною", demoDismissBtn: "Прибрати",
       langSection: "Мова",
@@ -1187,6 +1195,7 @@
       archivedBannerTitle: "Data archived", archivedBannerDesc: (date) => `Your circle is hidden until ${date}. Nothing was deleted — open the app again and it will all be there.`,
       restoreNow: "Restore now",
       pauseOrDelete: "Delete / Pause", deleteSectionTitle: "Delete permanently", deleteSectionDesc: "All data will be deleted forever. This cannot be undone.",
+      logoutSectionTitle: "Sign out", logoutSectionDesc: "Your data stays on the server — you can sign in again with the same Google account anytime, on any device.", logoutBtn: "Sign out", logoutConfirm: "Sign out on this device? Your data won't be deleted, you can sign in again.",
       deleteForeverStep1: "Delete everything permanently", deleteForeverStep2: "Are you sure? Tap again to delete", deletePersonBtn: "Delete this person", deletePersonConfirm: "Are you sure? Tap again",
       demoPersonNote: "This is a demo example to show what's possible. Edit the card to replace it with your own real person, or just remove it.", demoReplaceBtn: "Replace with my person", demoDismissBtn: "Remove",
       langSection: "Language",
@@ -1288,6 +1297,7 @@
       archivedBannerTitle: "Date arhivate", archivedBannerDesc: (date) => `Cercul e ascuns pana la ${date}. Nimic nu a fost sters - deschide aplicatia din nou si totul va fi acolo.`,
       restoreNow: "Restaureaza acum",
       pauseOrDelete: "Sterge / Pauza", deleteSectionTitle: "Sterge definitiv", deleteSectionDesc: "Toate datele vor fi sterse definitiv. Aceasta actiune nu poate fi anulata.",
+      logoutSectionTitle: "Deconectare", logoutSectionDesc: "Datele tale raman pe server - te poti conecta din nou cu acelasi cont Google oricand, pe orice dispozitiv.", logoutBtn: "Deconectare", logoutConfirm: "Te deconectezi pe acest dispozitiv? Datele nu se sterg, te poti conecta din nou.",
       deleteForeverStep1: "Sterge tot definitiv", deleteForeverStep2: "Esti sigur? Apasa din nou pentru a sterge", deletePersonBtn: "Sterge aceasta persoana", deletePersonConfirm: "Esti sigur? Apasa din nou",
       demoPersonNote: "Acesta este un exemplu demo pentru a arata posibilitatile. Editeaza cartela ca sa o inlocuiesti cu propria ta persoana, sau doar elimin-o.", demoReplaceBtn: "Inlocuieste cu persoana mea", demoDismissBtn: "Elimina",
       langSection: "Limbă",
@@ -2707,6 +2717,17 @@
   }
 
   let deleteConfirmPending = false;
+
+  function handleLogoutClick() {
+    if (!confirm(T('logoutConfirm'))) return;
+    // Просто забываем локальную сессию — на сервере ничего не удаляется,
+    // данные останутся доступны при следующем входе тем же аккаунтом.
+    localStorage.removeItem('tendo_session_token');
+    localStorage.removeItem('tendo_consent_given');
+    localStorage.removeItem('tendo_google_prompt_shown');
+    localStorage.removeItem('tendo_device_id');
+    location.reload();
+  }
 
   function handleDeleteForeverClick() {
     const btn = document.getElementById('deleteForeverBtn');
