@@ -1819,6 +1819,7 @@
       }
       setServerStatus(true);
       await loadCircleFromServer();
+      await loadMeState();
       showScreen('circle');
       if (pendingActionAfterSignIn) {
         const action = pendingActionAfterSignIn;
