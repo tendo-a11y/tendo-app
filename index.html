@@ -1481,6 +1481,7 @@
   // наверх при каждом значимом обновлении. Показывается в Профиле каждому
   // владельцу круга ("Роль 1"), самая свежая запись первая.
   const CHANGELOG = [
+    { date: '2026-08-25', title: 'Выход из аккаунта', text: 'Теперь можно выйти с этого устройства, не удаляя данные — просто зайди снова тем же Google-аккаунтом в любой момент.' },
     { date: '2026-08-24', title: 'Свой Wishlist', text: 'Теперь можно указать, что хочется на день рождения или другую значимую дату — это увидят те, кто добавит тебя в свой круг.' },
     { date: '2026-08-24', title: 'Ответы в поддержке', text: 'Если написал(а) в поддержку — ответ теперь виден прямо в приложении, без почты.' },
     { date: '2026-08-22', title: 'Настоящий вход через Google', text: 'Круг теперь привязан к твоему аккаунту, а не к браузеру — данные не потеряются при смене телефона или очистке кэша.' },
@@ -1740,6 +1741,11 @@
       ]},
   };
 
+  // Сохраняем оригинальные данные демо-людей ДО фильтрации — понадобятся,
+  // чтобы восстановить карточку, если сервер (для текущего аккаунта) скажет,
+  // что она не была отклонена, хотя локально уже была удалена.
+  const ORIGINAL_DEMO_DATA = JSON.parse(JSON.stringify(people));
+
   // Демо-людей, которых уже заменили или удалили, больше не показываем при следующих
   // открытиях приложения (иначе они бы "воскресали" каждый раз, ведь сами демо-записи
   // прописаны прямо в коде, не в базе данных).
@@ -1894,6 +1900,27 @@
       const data = await apiFetch('/me');
       if (data.user) {
         isRealAccount = !!(data.user.google_id && !data.user.google_id.startsWith('device_'));
+
+        // Сверяем список отклонённых демо с сервером — источником истины для
+        // ЭТОГО аккаунта. Если вошли другим Google-аккаунтом на том же
+        // устройстве, локальный список браузера мог быть от другого аккаунта.
+        try {
+          const serverDismissed = JSON.parse(data.user.dismissed_demos_json || '[]');
+          let changed = false;
+          Object.keys(ORIGINAL_DEMO_DATA).forEach(key => {
+            const shouldBeDismissed = serverDismissed.includes(key);
+            const currentlyDismissed = !people[key];
+            if (shouldBeDismissed && !currentlyDismissed) {
+              delete people[key];
+              changed = true;
+            } else if (!shouldBeDismissed && currentlyDismissed) {
+              people[key] = JSON.parse(JSON.stringify(ORIGINAL_DEMO_DATA[key]));
+              changed = true;
+            }
+          });
+          localStorage.setItem('tendo_dismissed_demos', JSON.stringify(serverDismissed));
+          if (changed) rebuildCircle();
+        } catch (e) { console.warn('Не удалось сверить список демо с сервером:', e.message); }
       }
       if (data.user && data.user.archived_until) {
         archiveUntil = new Date(data.user.archived_until);
@@ -1977,7 +2004,7 @@
             delete people[key];
             if (!dismissed.includes(key)) dismissed.push(key);
           });
-          localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
+          saveDismissedDemos(dismissed);
         }
         rebuildCircle();
       }
@@ -2515,7 +2542,7 @@
           p.isDemo = true;
           people[key] = p;
           const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
-          localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed.filter(k => k !== key)));
+          saveDismissedDemos(dismissed.filter(k => k !== key));
           rebuildCircle();
           openPerson(key);
           alert(err.message);
@@ -2552,12 +2579,22 @@
     }
   }
 
+  // Единая точка сохранения списка отклонённых демо — пишет и в localStorage
+  // (для мгновенного отображения), и на сервер (привязка к аккаунту, не браузеру).
+  function saveDismissedDemos(dismissed) {
+    localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
+    if (serverConnected) {
+      apiFetch('/me/dismissed-demos', { method: 'PUT', body: JSON.stringify({ dismissed }) })
+        .catch(err => console.warn('Не удалось сохранить отклонённые демо на сервере:', err.message));
+    }
+  }
+
   function dismissDemoKey(key) {
     try {
       const dismissed = JSON.parse(localStorage.getItem('tendo_dismissed_demos') || '[]');
       if (!dismissed.includes(key)) {
         dismissed.push(key);
-        localStorage.setItem('tendo_dismissed_demos', JSON.stringify(dismissed));
+        saveDismissedDemos(dismissed);
       }
     } catch (e) { /* не критично */ }
   }
