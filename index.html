@@ -1872,6 +1872,13 @@
         // Проверяем, что сохранённый токен всё ещё действителен на сервере
         try {
           await apiFetch('/circle');
+          // Сессия уже была активна ДО перехода по этой ссылке — значит обычный
+          // путь регистрации (с ?ref=) не сработает сам по себе. Обрабатываем
+          // реферальный код отдельно, раз человек всё равно открыл эту ссылку.
+          if (referralCodeFromUrl) {
+            apiFetch('/me/accept-referral', { method: 'POST', body: JSON.stringify({ ref: referralCodeFromUrl }) })
+              .catch(err => console.warn('Не удалось обработать реферальную ссылку:', err.message));
+          }
         } catch (checkErr) {
           // Токен устарел (например, сервер обновлялся) — забываем его и входим заново
           sessionToken = null;
