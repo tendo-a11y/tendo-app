@@ -7,28 +7,6 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Tendo — прототип</title>
-<script>
-  // Встроенные браузеры соцсетей (Instagram, Facebook и т.д.) иногда показывают
-  // старую сохранённую копию страницы. Эта проверка работает изнутри уже открытой
-  // страницы — независимо от того, откуда она была загружена — и сама
-  // перезагружает страницу, если версия на сервере обновилась.
-  // Номер версии генерируется автоматически (текущей датой и временем) отдельным
-  // шагом перед каждой отправкой файла — не вписывается вручную, чтобы не забыть.
-  const PAGE_VERSION = '2026-08-26-1504';
-  (function checkForFreshVersion() {
-    try {
-      fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
-        .then(res => res.text())
-        .then(html => {
-          const match = html.match(/const PAGE_VERSION = '([^']+)'/);
-          if (match && match[1] !== PAGE_VERSION) {
-            location.href = location.pathname + '?_v=' + Date.now();
-          }
-        })
-        .catch(() => { /* проверка не удалась — не критично, продолжаем как есть */ });
-    } catch (e) { /* не критично */ }
-  })();
-</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500,600&family=Manrope:wght@400;500;600;700;800&display=swap');
