@@ -920,7 +920,7 @@
       aboutOf: "О ", aboutOfHer: "ней", aboutLikes: "Любит", aboutRemember: "Что стоит помнить", nothingAdded: "Пока ничего не добавлено.",
       aboutPrivacy: (name) => `Это твои заметки. Если ${name} сама зарегистрируется в Tendo — её собственные слова о себе будут в приоритете.`,
       wishlistFor: "идеи подарков для ", wishlistEmpty: "Пока пусто. Можно добавить идею, когда она появится.",
-      wishlistAddPh: "например, кружка ручной работы", wishlistAddBtn: "Добавить идею", wishlistExamplesHint: "Или выбери из примеров ниже:",
+      wishlistAddPh: "например, кружка ручной работы", wishlistAddBtn: "Добавить идею", wishlistExamplesHint: "Или выбери из примеров ниже:", wishlistExpandAll: "Раскрыть весь список",
       datesAddPh: "например, годовщина отношений — 3 сентября", datesAddMoreBtn: "Ещё дата", datesRememberBtn: "Запомнить",
       historyAddPh: "что произошло, что стоит запомнить", historyAddBtn: "Добавить запись",
       datesFor: "важные даты — ", datesEmpty: "Пока даты не добавлены.", birthdayLabel: "День рождения",
@@ -1022,7 +1022,7 @@
       aboutOf: "Про ", aboutOfHer: "неї", aboutLikes: "Любить", aboutRemember: "Що варто пам'ятати", nothingAdded: "Поки нічого не додано.",
       aboutPrivacy: (name) => `Це твої нотатки. Якщо ${name} сама зареєструється в Tendo — її власні слова про себе матимуть пріоритет.`,
       wishlistFor: "ідеї подарунків для ", wishlistEmpty: "Поки порожньо. Можна додати ідею, коли вона з'явиться.",
-      wishlistAddPh: "наприклад, чашка ручної роботи", wishlistAddBtn: "Додати ідею", wishlistExamplesHint: "Або обери з прикладів нижче:",
+      wishlistAddPh: "наприклад, чашка ручної роботи", wishlistAddBtn: "Додати ідею", wishlistExamplesHint: "Або обери з прикладів нижче:", wishlistExpandAll: "Розгорнути весь список",
       datesAddPh: "наприклад, річниця стосунків — 3 вересня", datesAddMoreBtn: "Ще дата", datesRememberBtn: "Запам'ятати",
       historyAddPh: "що сталося, що варто запам'ятати", historyAddBtn: "Додати запис",
       datesFor: "важливі дати — ", datesEmpty: "Поки дати не додано.", birthdayLabel: "День народження",
@@ -1124,7 +1124,7 @@
       aboutOf: "About ", aboutOfHer: "her", aboutLikes: "Likes", aboutRemember: "Worth remembering", nothingAdded: "Nothing added yet.",
       aboutPrivacy: (name) => `These are your own notes. If ${name} signs up for Tendo herself, her own words about herself will take priority.`,
       wishlistFor: "gift ideas for ", wishlistEmpty: "Empty for now. Add an idea whenever one comes up.",
-      wishlistAddPh: "e.g. a handmade mug", wishlistAddBtn: "Add idea", wishlistExamplesHint: "Or pick from examples below:",
+      wishlistAddPh: "e.g. a handmade mug", wishlistAddBtn: "Add idea", wishlistExamplesHint: "Or pick from examples below:", wishlistExpandAll: "Show full list",
       datesAddPh: "e.g. anniversary — September 3", datesAddMoreBtn: "Add another", datesRememberBtn: "Remember",
       historyAddPh: "what happened, worth remembering", historyAddBtn: "Add note",
       datesFor: "important dates — ", datesEmpty: "No dates added yet.", birthdayLabel: "Birthday",
@@ -1226,7 +1226,7 @@
       aboutOf: "Despre ", aboutOfHer: "ea", aboutLikes: "Îi place", aboutRemember: "Merită reținut", nothingAdded: "Nimic adăugat încă.",
       aboutPrivacy: (name) => `Acestea sunt notițele tale. Dacă ${name} se înregistrează singură pe Tendo, cuvintele ei proprii despre sine vor avea prioritate.`,
       wishlistFor: "idei de cadouri pentru ", wishlistEmpty: "Momentan gol. Poți adăuga o idee oricând apare una.",
-      wishlistAddPh: "de ex. o cana facuta manual", wishlistAddBtn: "Adauga idee", wishlistExamplesHint: "Sau alege din exemplele de mai jos:",
+      wishlistAddPh: "de ex. o cana facuta manual", wishlistAddBtn: "Adauga idee", wishlistExamplesHint: "Sau alege din exemplele de mai jos:", wishlistExpandAll: "Arata lista completa",
       datesAddPh: "de ex. aniversare - 3 septembrie", datesAddMoreBtn: "Inca o data", datesRememberBtn: "Retine",
       historyAddPh: "ce s-a intamplat, merita retinut", historyAddBtn: "Adauga notita",
       datesFor: "date importante — ", datesEmpty: "Nu sunt date adăugate încă.", birthdayLabel: "Ziua de naștere",
@@ -1351,6 +1351,7 @@
   const silhouette = `<svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.55)"><circle cx="12" cy="8" r="4.2"/><path d="M4 20.5c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5"/></svg>`;
 
   function openProfile() {
+    ownerWishlistExpanded = false;
     document.getElementById('ownerNameInput').value = ownerProfile.name;
     document.getElementById('ownerAbout').value = ownerProfile.about;
     document.getElementById('ownerBirthday').value = ownerProfile.birthdate || '';
@@ -1496,6 +1497,7 @@
     `).join('');
   }
 
+  let ownerWishlistExpanded = false;
   function renderOwnerWishlist() {
     const container = document.getElementById('ownerWishlistList');
     if (!container) return;
@@ -1503,13 +1505,20 @@
       container.innerHTML = `<div class="empty-advice" style="padding-bottom:8px">${T('wishlistEmpty')}</div>`;
       return;
     }
-    container.innerHTML = ownerProfile.wishlist.map((w, i) => `
+    const items = ownerProfile.wishlist;
+    const showCount = ownerWishlistExpanded ? items.length : Math.min(3, items.length);
+    const visibleItems = items.slice(0, showCount);
+    let html = visibleItems.map((w, i) => `
       <div class="advice-item" style="cursor:default">
         <div class="advice-icon">🎁</div>
         <div class="advice-text">${escapeHtmlApp(w)}</div>
         <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2" style="cursor:pointer" onclick="removeOwnerWishlistItem(${i})"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </div>
     `).join('');
+    if (!ownerWishlistExpanded && items.length > 3) {
+      html += `<div class="advice-item" style="cursor:pointer;justify-content:center;color:var(--text-dim)" onclick="ownerWishlistExpanded = true; renderOwnerWishlist();">${T('wishlistExpandAll')} (${items.length})</div>`;
+    }
+    container.innerHTML = html;
   }
 
   function addOwnerWishlistItem() {
