@@ -478,6 +478,7 @@
 
       <div id="aboutFormMode">
         <div class="field"><label class="field-label" data-i18n="aboutFieldGeneral">О себе</label><textarea class="field-input" id="ownerAbout" data-i18n-ph="aboutMePh" placeholder="например, люблю дарить сюрпризы, но плохо помню даты" style="min-height:56px"></textarea></div>
+        <div class="field"><label class="field-label" data-i18n="addBirthday">День рождения</label><input class="field-input" id="ownerBirthday" data-i18n-ph="addBirthdayPh" placeholder="например, 12 марта" /></div>
         <div class="field"><label class="field-label" data-i18n="aboutFieldInterests">Интересы и увлечения</label><textarea class="field-input" id="ownerInterests" data-i18n-ph="aboutInterestsPh" placeholder="например, книги, велосипед, кулинария" style="min-height:56px"></textarea></div>
         <div class="field"><label class="field-label" data-i18n="aboutFieldDates">Важные даты</label><textarea class="field-input" id="ownerDates" data-i18n-ph="aboutDatesPh" placeholder="например, день рождения 12 марта" style="min-height:56px"></textarea></div>
         <div class="field"><label class="field-label" data-i18n="aboutFieldCommunication">Как лучше со мной общаться</label><textarea class="field-input" id="ownerCommunication" data-i18n-ph="aboutCommunicationPh" placeholder="например, не люблю звонки без предупреждения, лучше написать" style="min-height:56px"></textarea></div>
@@ -1361,6 +1362,7 @@
   function openProfile() {
     document.getElementById('ownerNameInput').value = ownerProfile.name;
     document.getElementById('ownerAbout').value = ownerProfile.about;
+    document.getElementById('ownerBirthday').value = ownerProfile.birthdate || '';
     document.getElementById('ownerInterests').value = ownerProfile.interests || '';
     document.getElementById('ownerDates').value = ownerProfile.dates || '';
     document.getElementById('ownerCommunication').value = ownerProfile.communication || '';
@@ -1456,7 +1458,7 @@
     { date: '2026-08-21', title: 'Советы стали честнее', text: 'Ежедневные советы теперь собираются напрямую из твоих данных, без риска что-то выдумать.' }
   ];
 
-  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', photoDataUrl: null, wishlist: [], referralCode: null };
+  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', birthdate: '', photoDataUrl: null, wishlist: [], referralCode: null };
 
   function handleOwnerPhotoSelect(event) {
     const file = event.target.files[0];
@@ -1537,6 +1539,7 @@
   async function saveWholeProfile() {
     ownerProfile.name = document.getElementById('ownerNameInput').value || 'Александр';
     ownerProfile.about = document.getElementById('ownerAbout').value;
+    ownerProfile.birthdate = document.getElementById('ownerBirthday').value;
     ownerProfile.interests = document.getElementById('ownerInterests').value;
     ownerProfile.dates = document.getElementById('ownerDates').value;
     ownerProfile.communication = document.getElementById('ownerCommunication').value;
@@ -1559,7 +1562,7 @@
           body: JSON.stringify({
             about: ownerProfile.about, interests: ownerProfile.interests,
             important_dates: ownerProfile.dates, communication_style: ownerProfile.communication,
-            photo_url: ownerProfile.photoDataUrl, wishlist: ownerProfile.wishlist || []
+            photo_url: ownerProfile.photoDataUrl, wishlist: ownerProfile.wishlist || [], birthdate: ownerProfile.birthdate
           })
         })
       ]);
@@ -1886,6 +1889,9 @@
       if (data.user) {
         isRealAccount = !!(data.user.google_id && !data.user.google_id.startsWith('device_'));
         ownerProfile.referralCode = data.user.referral_code || null;
+        ownerProfile.birthdate = data.user.birthdate || '';
+        const birthdayEl = document.getElementById('ownerBirthday');
+        if (birthdayEl) birthdayEl.value = ownerProfile.birthdate;
         renderReferralLink();
 
         // Сверяем список отклонённых демо с сервером — источником истины для
