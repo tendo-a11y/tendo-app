@@ -2442,9 +2442,9 @@
       <div class="relation-row">
         ${['partner','friend','family','colleague'].map(code => `<div class="relation-chip ${code===p.relation?'active':''}" data-rel="${code}" onclick="document.querySelectorAll('#editContent .relation-chip').forEach(c=>c.classList.remove('active'));this.classList.add('active')">${relLabel(code)}</div>`).join('')}
       </div>
-      <div class="field" style="margin-top:22px"><label class="field-label">${T('addLikes')}</label><textarea class="field-input" id="editLikes">${p.likes || ''}</textarea></div>
-      <div class="field"><label class="field-label">${T('addBirthday')}</label><input class="field-input" id="editBirthday" placeholder="${T('addBirthdayPh')}" value="${p.birthdate || ''}" /></div>
-      <div class="field"><label class="field-label">${T('addRemember')}</label><textarea class="field-input" id="editRemember">${p.remember || ''}</textarea></div>
+      <div class="field" style="margin-top:22px"><label class="field-label">${T('addLikes')}</label><textarea class="field-input" id="editLikes">${p.isDemo ? '' : (p.likes || '')}</textarea></div>
+      <div class="field"><label class="field-label">${T('addBirthday')}</label><input class="field-input" id="editBirthday" placeholder="${T('addBirthdayPh')}" value="${p.isDemo ? '' : (p.birthdate || '')}" /></div>
+      <div class="field"><label class="field-label">${T('addRemember')}</label><textarea class="field-input" id="editRemember">${p.isDemo ? '' : (p.remember || '')}</textarea></div>
       <div class="advice-item" style="cursor:default;margin:0 18px 14px">
         <div class="advice-icon" style="background:rgba(240,169,78,0.15)">⭐</div>
         <div class="advice-text">${T('legendPriority')}</div>
