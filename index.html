@@ -606,7 +606,7 @@
         <div class="advice-text" data-i18n="privacyPolicy">Политика конфиденциальности</div>
         <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
       </div>
-      <div class="advice-item" onclick="showScreen('support'); loadSupportHistory();">
+      <div class="advice-item" onclick="showScreen('support'); loadSupportHistory(); document.getElementById('supportConfirmBanner').style.display='none';">
         <div class="advice-icon" style="background:rgba(140,150,240,0.15)">💬</div>
         <div><div class="advice-text" data-i18n="support">Написать в поддержку</div><div class="ti-sub">Nymfa.sv@gmail.com</div></div>
         <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
@@ -653,6 +653,7 @@
       <textarea class="field-input" id="supportText" data-i18n-ph="supportPlaceholder" placeholder="опиши проблему или вопрос как можно подробнее" style="min-height:140px"></textarea>
     </div>
     <div class="save-bar"><button class="save-btn" onclick="sendSupportMessage()" id="sendSupportBtn" data-i18n="supportSend">Отправить сообщение</button></div>
+    <div id="supportConfirmBanner" style="display:none;margin:0 18px 16px;padding:14px 16px;background:rgba(90,200,140,0.12);border:1px solid rgba(90,200,140,0.35);border-radius:14px;font-size:13px;color:#7fd9a3;line-height:1.5"></div>
 
     <div class="section" style="margin-top:8px">
       <div class="section-head"><span class="section-title" data-i18n="supportHistoryTitle">Мои обращения</span></div>
@@ -940,6 +941,7 @@
       supportTitle: "Написать в поддержку", supportSub: "опиши, что случилось — ответим на почту", supportPlaceholder: "опиши проблему или вопрос как можно подробнее",
       supportEmailNote: "Ответим на Nymfa.sv@gmail.com — если хочешь получить ответ, укажи свою почту в тексте.",
       supportSend: "Отправить сообщение", supportSent: "Отправлено ✓", supportSendError: "Не удалось отправить, попробуй ещё раз",
+      supportAutoReply: "Спасибо за обращение! Мы свяжемся с тобой в ближайшее время.",
       supportSub2: "ответ увидишь здесь же", supportHistoryTitle: "Мои обращения", supportHistoryEmpty: "Пока не было обращений",
       supportReplied: "есть ответ", supportWaiting: "ждёт ответа", supportReplyLabel: "Ответ от Tendo:",
       accountSection: "Аккаунт", logout: "Архивировать данные", deleteAccount: "Удалить аккаунт и все данные",
@@ -1040,6 +1042,7 @@
       supportTitle: "Написати в підтримку", supportSub: "опиши, що сталося — відповімо на пошту", supportPlaceholder: "опиши проблему або питання якомога детальніше",
       supportEmailNote: "Відповімо на Nymfa.sv@gmail.com — якщо хочеш отримати відповідь, вкажи свою пошту в тексті.",
       supportSend: "Надіслати повідомлення", supportSent: "Надіслано ✓", supportSendError: "Не вдалося надіслати, спробуй ще раз",
+      supportAutoReply: "Дякуємо за звернення! Ми зв'яжемося з тобою найближчим часом.",
       supportSub2: "відповідь побачиш тут же", supportHistoryTitle: "Мої звернення", supportHistoryEmpty: "Поки не було звернень",
       supportReplied: "є відповідь", supportWaiting: "чекає відповіді", supportReplyLabel: "Відповідь від Tendo:",
       accountSection: "Обліковий запис", logout: "Архівувати дані", deleteAccount: "Видалити акаунт і всі дані",
@@ -1140,6 +1143,7 @@
       supportTitle: "Contact support", supportSub: "describe what happened — we'll reply by email", supportPlaceholder: "describe the problem or question in as much detail as possible",
       supportEmailNote: "We'll reply to Nymfa.sv@gmail.com — if you'd like a reply, include your email in the message.",
       supportSend: "Send message", supportSent: "Sent ✓", supportSendError: "Could not send, try again",
+      supportAutoReply: "Thanks for reaching out! We'll get back to you shortly.",
       supportSub2: "you'll see the reply right here", supportHistoryTitle: "My messages", supportHistoryEmpty: "No messages yet",
       supportReplied: "replied", supportWaiting: "waiting for reply", supportReplyLabel: "Reply from Tendo:",
       accountSection: "Account", logout: "Archive my data", deleteAccount: "Delete account and all data",
@@ -1240,6 +1244,7 @@
       supportTitle: "Scrie la suport", supportSub: "descrie ce s-a intamplat - raspundem pe email", supportPlaceholder: "descrie problema sau intrebarea cat mai detaliat",
       supportEmailNote: "Raspundem la Nymfa.sv@gmail.com - daca vrei un raspuns, mentioneaza emailul tau in mesaj.",
       supportSend: "Trimite mesajul", supportSent: "Trimis ✓", supportSendError: "Nu s-a putut trimite, incearca din nou",
+      supportAutoReply: "Multumim pentru mesaj! Te vom contacta in cel mai scurt timp.",
       supportSub2: "vei vedea raspunsul aici", supportHistoryTitle: "Mesajele mele", supportHistoryEmpty: "Inca nu ai trimis mesaje",
       supportReplied: "raspuns primit", supportWaiting: "asteapta raspuns", supportReplyLabel: "Raspuns de la Tendo:",
       accountSection: "Cont", logout: "Arhivează datele", deleteAccount: "Șterge contul și toate datele",
@@ -2645,6 +2650,9 @@
         btn.textContent = T('supportSent');
         textEl.value = '';
         loadSupportHistory();
+        const banner = document.getElementById('supportConfirmBanner');
+        banner.textContent = T('supportAutoReply');
+        banner.style.display = 'block';
         setTimeout(() => {
           btn.textContent = original;
           btn.disabled = false;
