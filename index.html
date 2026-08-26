@@ -927,6 +927,7 @@
       historyFor: "что уже было — ", historyEmpty: "История пока пуста.<br>Здесь появится то, что уже было сделано.",
       editPhotoHint: "Нажми, чтобы изменить фото", editSave: "Сохранить изменения",
       editPrivacyNote: "Вноси или изменяй данные о человеке на своё усмотрение — это не отобразится у него лично.",
+      demoReplaceWarning: "Это демо-карточка для примера. Замени ВСЕ поля (не только имя и фото) на данные настоящего человека — иначе они останутся пустыми.",
       helperTitle: "Что написать", helperSub: "Готовые заготовки для черновика", helperFor: "для ",
       helperOccasion: "Повод", toneWarm: "Тёплый", toneTender: "Нежный", toneLight: "Лёгкий",
       helperDraftLabel: "Черновик сообщения", helperCopy: "Скопировать текст", helperCopied: "Скопировано ✓",
@@ -1028,6 +1029,7 @@
       historyFor: "що вже було — ", historyEmpty: "Історія поки порожня.<br>Тут з'явиться те, що вже було зроблено.",
       editPhotoHint: "Натисни, щоб змінити фото", editSave: "Зберегти зміни",
       editPrivacyNote: "Вноси або змінюй дані про людину на власний розсуд — це не відобразиться в неї особисто.",
+      demoReplaceWarning: "Це демо-картка для прикладу. Заміни ВСІ поля (не тільки ім'я та фото) на дані справжньої людини — інакше вони залишаться порожніми.",
       helperTitle: "Що написати", helperSub: "Готові заготовки для чернетки", helperFor: "для ",
       helperOccasion: "Привід", toneWarm: "Теплий", toneTender: "Ніжний", toneLight: "Легкий",
       helperDraftLabel: "Чернетка повідомлення", helperCopy: "Скопіювати текст", helperCopied: "Скопійовано ✓",
@@ -1129,6 +1131,7 @@
       historyFor: "what's happened so far — ", historyEmpty: "History is empty for now.<br>What's already been done will appear here.",
       editPhotoHint: "Tap to change photo", editSave: "Save changes",
       editPrivacyNote: "Enter or change info about this person however you like — they won't see it themselves.",
+      demoReplaceWarning: "This is a sample demo card. Replace ALL fields (not just name and photo) with the real person's info — otherwise they'll stay empty.",
       helperTitle: "What to write", helperSub: "Ready-made draft templates", helperFor: "for ",
       helperOccasion: "Occasion", toneWarm: "Warm", toneTender: "Tender", toneLight: "Light",
       helperDraftLabel: "Message draft", helperCopy: "Copy text", helperCopied: "Copied ✓",
@@ -1230,6 +1233,7 @@
       historyFor: "ce s-a întâmplat până acum — ", historyEmpty: "Istoricul e gol deocamdată.<br>Aici va apărea ce s-a făcut deja.",
       editPhotoHint: "Atinge pentru a schimba poza", editSave: "Salvează modificările",
       editPrivacyNote: "Adauga sau modifica datele despre aceasta persoana cum doresti - nu se vor afisa la ea personal.",
+      demoReplaceWarning: "Aceasta este o carte demo, ca exemplu. Inlocuieste TOATE campurile (nu doar numele si poza) cu datele persoanei reale - altfel vor ramane goale.",
       helperTitle: "Ce să scrii", helperSub: "Sabloane gata pentru ciorna", helperFor: "pentru ",
       helperOccasion: "Motiv", toneWarm: "Cald", toneTender: "Tandru", toneLight: "Ușor",
       helperDraftLabel: "Ciornă mesaj", helperCopy: "Copiază textul", helperCopied: "Copiat ✓",
@@ -1516,11 +1520,31 @@
     ownerProfile.wishlist.push(text);
     input.value = '';
     renderOwnerWishlist();
+    if (serverConnected) {
+      trackCriticalSave(apiFetch('/me/profile', {
+        method: 'PUT',
+        body: JSON.stringify({
+          about: ownerProfile.about, interests: ownerProfile.interests,
+          important_dates: ownerProfile.dates, communication_style: ownerProfile.communication,
+          photo_url: ownerProfile.photoDataUrl, wishlist: ownerProfile.wishlist, birthdate: ownerProfile.birthdate
+        })
+      })).catch(err => console.warn('Не удалось сохранить Wishlist на сервере:', err.message));
+    }
   }
 
   function removeOwnerWishlistItem(index) {
     ownerProfile.wishlist.splice(index, 1);
     renderOwnerWishlist();
+    if (serverConnected) {
+      trackCriticalSave(apiFetch('/me/profile', {
+        method: 'PUT',
+        body: JSON.stringify({
+          about: ownerProfile.about, interests: ownerProfile.interests,
+          important_dates: ownerProfile.dates, communication_style: ownerProfile.communication,
+          photo_url: ownerProfile.photoDataUrl, wishlist: ownerProfile.wishlist, birthdate: ownerProfile.birthdate
+        })
+      })).catch(err => console.warn('Не удалось сохранить Wishlist на сервере:', err.message));
+    }
   }
 
   async function saveWholeProfile() {
@@ -2437,6 +2461,10 @@
       </div>
       <input type="file" id="editPhotoInput" accept="image/*" style="display:none" onchange="handlePhotoSelect(event, 'editPhotoUpload', '${key}')" />
       <div class="photo-hint">${T('editPhotoHint')}</div>
+      ${p.isDemo ? `<div class="demo-replace-warning" style="margin:14px 18px;padding:14px 16px;background:rgba(233,180,90,0.12);border:1px solid rgba(233,180,90,0.4);border-radius:14px;font-size:12.5px;color:#e9c98a;line-height:1.5;display:flex;gap:10px">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#e9c98a" stroke-width="1.8" style="flex-shrink:0;margin-top:2px"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
+        <span>${T('demoReplaceWarning')}</span>
+      </div>` : ''}
       <div class="field"><label class="field-label">${T('addName')}</label><input class="field-input" value="${p.name}" id="editName" /></div>
       <div class="section-label">${T('addRelation')}</div>
       <div class="relation-row">
