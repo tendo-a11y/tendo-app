@@ -14,7 +14,7 @@
   // перезагружает страницу, если версия на сервере обновилась.
   // Номер версии генерируется автоматически (текущей датой и временем) отдельным
   // шагом перед каждой отправкой файла — не вписывается вручную, чтобы не забыть.
-  const PAGE_VERSION = '2026-08-26-1446';
+  const PAGE_VERSION = '2026-08-26-1504';
   (function checkForFreshVersion() {
     try {
       fetch(location.pathname + '?_freshcheck=' + Date.now(), { cache: 'no-store' })
@@ -2274,6 +2274,7 @@
         <div class="quick-link" onclick="openHistory('${key}')"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>${T('qlHistory')}</div>
         <div class="quick-link edit" onclick="openEdit('${key}')"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg></div>${T('qlEdit')}</div>
       </div>
+      <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg><span>${T('editPrivacyNote')}</span></div>
     `;
     showScreen('person');
   }
