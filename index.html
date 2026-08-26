@@ -2301,12 +2301,24 @@
     document.getElementById('aboutBack').onclick = () => openPerson(key);
     document.getElementById('aboutContent').innerHTML = `
       <div class="section"><div class="section-head"><span class="section-title">${T('aboutLikes')}</span></div>
-        <div class="empty-advice" style="text-align:left;color:#e5e0ef">${escapeHtmlApp(p.likes) || T('nothingAdded')}</div></div>
+        <div class="field" style="padding:0"><textarea class="field-input" id="aboutLikesInput" onblur="saveAboutField('${key}', 'likes', this.value)" placeholder="${T('nothingAdded')}" style="min-height:70px">${escapeHtmlApp(p.likes)}</textarea></div></div>
       <div class="section"><div class="section-head"><span class="section-title">${T('aboutRemember')}</span></div>
-        <div class="empty-advice" style="text-align:left;color:#e5e0ef">${escapeHtmlApp(p.remember) || T('nothingAdded')}</div></div>
+        <div class="field" style="padding:0"><textarea class="field-input" id="aboutRememberInput" onblur="saveAboutField('${key}', 'remember', this.value)" placeholder="${T('nothingAdded')}" style="min-height:70px">${escapeHtmlApp(p.remember)}</textarea></div></div>
       <div class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg><span>${T('aboutPrivacy')(escapeHtmlApp(p.name))}</span></div>
     `;
     showScreen('about');
+  }
+
+  function saveAboutField(key, field, value) {
+    const p = people[key];
+    if (p[field] === value) return; // ничего не изменилось — не тратим запрос впустую
+    p[field] = value;
+    if (serverConnected && p.serverId) {
+      trackCriticalSave(apiFetch('/circle/' + p.serverId, {
+        method: 'PUT',
+        body: JSON.stringify({ [field]: value })
+      })).catch(err => console.warn('Не удалось сохранить изменения на сервере:', err.message));
+    }
   }
 
   const wishlistExamples = [
