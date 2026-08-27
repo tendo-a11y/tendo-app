@@ -1450,7 +1450,7 @@
     { date: '2026-08-21', title: 'Советы стали честнее', text: 'Ежедневные советы теперь собираются напрямую из твоих данных, без риска что-то выдумать.' }
   ];
 
-  const ownerProfile = { name: 'Александр', about: '', interests: '', dates: '', communication: '', birthdate: '', photoDataUrl: null, wishlist: [], referralCode: null };
+  const ownerProfile = { name: '', about: '', interests: '', dates: '', communication: '', birthdate: '', photoDataUrl: null, wishlist: [], referralCode: null };
 
   function handleOwnerPhotoSelect(event) {
     const file = event.target.files[0];
@@ -1896,7 +1896,7 @@
         const idToken = `stub:${deviceId}:${deviceId}@local.tendo:${encodeURIComponent(ownerProfile.name || 'Пользователь')}`;
         const data = await apiFetch('/auth/google', {
           method: 'POST',
-          body: JSON.stringify({ idToken, language: currentLang })
+          body: JSON.stringify({ idToken, language: currentLang, ref: referralCodeFromUrl })
         });
         sessionToken = data.sessionToken;
         localStorage.setItem('tendo_session_token', sessionToken);
