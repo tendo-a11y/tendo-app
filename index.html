@@ -252,7 +252,7 @@
       <div style="font-size:52px;margin-bottom:16px">🔒</div>
       <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:12px" data-i18n="googleGateTitle">Защити свои данные</div>
       <div style="font-size:13.5px;color:var(--text-dim);line-height:1.6;margin-bottom:28px" data-i18n="googleGateDesc">Без входа через Google эти данные могут потеряться при смене телефона или очистке браузера. Войти можно и позже, в Настройках.</div>
-      <button class="save-btn" onclick="signInWithGoogle()" data-i18n="signInGoogle">Войти через Google</button>
+      <div id="googleSignInBtn1" style="display:flex;justify-content:center;margin-bottom:4px"></div>
       <button class="save-btn" style="background:rgba(255,255,255,0.06);color:var(--text-dim);box-shadow:none;margin-top:12px" onclick="skipGoogleSignIn()" data-i18n="skipSignIn">Продолжить без входа</button>
       <div id="googleGateStatus" style="font-size:12px;color:var(--text-faint);margin-top:14px"></div>
     </div>
@@ -491,10 +491,7 @@
     <div class="section" id="noAccountSection" style="background:rgba(239,95,146,0.08);border-color:rgba(239,95,146,0.25)">
       <div class="section-head"><span class="section-title" style="color:var(--wave)" data-i18n="noAccountWarningTitle">Данные хранятся только на этом телефоне</span></div>
       <div class="empty-advice" style="text-align:left;padding-bottom:12px" data-i18n="noAccountWarningDesc">Без входа в аккаунт данные будут потеряны при смене телефона или удалении приложения.</div>
-      <button class="save-btn" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px">
-        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.25 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z"/><path fill="#fff" d="M5.84 14.09A6.6 6.6 0 015.5 12c0-.73.12-1.43.34-2.09V7.07H2.18A11 11 0 001 12c0 1.77.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 00-9.82 6.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        <span data-i18n="signInGoogle">Войти через Google</span>
-      </button>
+      <div id="googleSignInBtn2" style="display:flex;justify-content:center"></div>
     </div>
 
     <div class="section" id="loggedInSection" style="display:none">
@@ -1783,7 +1780,34 @@
     }
   }
 
+  // google.accounts.id.prompt() (старый способ) — известная ненадёжность именно
+  // на мобильных браузерах: может молча ничего не показать, без единой ошибки.
+  // renderButton() встраивает настоящую, постоянно видимую кнопку от самого
+  // Google — работает значительно надёжнее и на компьютере, и на телефоне.
+  let googleButtonsRendered = false;
+  function initGoogleSignInButtons() {
+    if (typeof google === 'undefined' || !google.accounts) {
+      setTimeout(initGoogleSignInButtons, 200);
+      return;
+    }
+    if (googleButtonsRendered) return;
+    googleButtonsRendered = true;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential
+    });
+    ['googleSignInBtn1', 'googleSignInBtn2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        google.accounts.id.renderButton(el, { theme: 'filled_black', size: 'large', width: 280, text: 'signin_with', locale: currentLang });
+      }
+    });
+  }
+  initGoogleSignInButtons();
+
   function signInWithGoogle() {
+    // Оставлено для обратной совместимости — на случай, если где-то ещё
+    // остался старый вызов. Настоящие кнопки теперь рисует Google сам.
     if (typeof google === 'undefined' || !google.accounts) {
       alert('Google ещё загружается, попробуй через секунду.');
       return;
